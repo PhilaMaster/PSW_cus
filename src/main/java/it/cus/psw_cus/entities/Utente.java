@@ -11,34 +11,30 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode
 @ToString
-//@Table(name = "user_prova")
+@Table(name = "utente")
 public class Utente {
     @Id
-    //@Column(name = "id")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    //@Basic
-    //@Column(name = "nome")
+    @Basic
+    @Column(name = "nome")
     private String nome;
-//
-//    @Basic
-//    @Column(name = "cognome")
-//    private String cognome;
-//
-//    @Basic
-//    @Column(name = "sesso")
-//    private String sesso;
-//
-//    @Basic
-//    @Column(name = "email")
-//    private String email;
-//
-//    @Basic
-//    @Column(name = "password")
-//    private String password;
-//
-//    @Basic
-//    @Column(name = "privatnumIngressi")
-//    private int numIngressi;
+    @Basic
+    @Column(name = "cognome")
+    private String cognome;
+
+    @Basic
+    @Column(name = "sesso")
+    private String sesso;
+    @Basic
+    @Column(name = "email")
+    private String email;
+    @Basic
+    @Column(name = "password")
+    private String password;
+    @Basic
+    @Column(name = "privatnumIngressi")
+    private int numIngressi;
 }
