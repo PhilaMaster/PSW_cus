@@ -1,4 +1,4 @@
-package it.cus.psw_cus.repositories;
+package it.cus.psw_cus.home.repositories;
 
 import it.cus.psw_cus.entities.Utente;
 import org.springframework.data.jpa.repository.JpaRepository;

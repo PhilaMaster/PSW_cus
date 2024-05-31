@@ -2,21 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(title: Text('Flutter Spring Boot Example')),
-        body: Center(child: MyWidget()),
+        appBar: AppBar(title: const Text('Flutter Spring Boot Example')),
+        body: const Center(child: MyWidget()),
       ),
     );
   }
 }
 
 class MyWidget extends StatefulWidget {
+  const MyWidget({super.key});
+
   @override
   _MyWidgetState createState() => _MyWidgetState();
 }
@@ -68,7 +72,7 @@ class _MyWidgetState extends State<MyWidget> {
         Text(_response),
         ElevatedButton(
           onPressed: _sendData,
-          child: Text('Send Data'),
+          child: const Text('Send Data'),
         ),
       ],
     );
