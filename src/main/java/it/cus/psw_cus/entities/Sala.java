@@ -1,10 +1,13 @@
 package it.cus.psw_cus.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,4 +32,8 @@ public class Sala {
     @Basic
     @Column(name = "capienza", nullable = false)
     private int capienza;
+
+    @OneToMany(mappedBy="sala", cascade = CascadeType.MERGE )
+    @JsonIgnore
+    private List<Prenotazione> prenotazioni;
 }

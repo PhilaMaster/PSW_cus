@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 
 class RootPage extends StatefulWidget {
+  const RootPage({super.key});
+
   @override
   _RootPageState createState() => _RootPageState();
 }
@@ -23,7 +25,7 @@ class _RootPageState extends State<RootPage> with SingleTickerProviderStateMixin
         title: const Text("CUS COSENZA"),
         bottom: TabBar(
           controller: _tabController,
-          tabs: [
+          tabs: const [
             Tab(text: "Home"),
             Tab(text: "Shop"),
             Tab(text: "Prenotazioni"),
@@ -37,31 +39,31 @@ class _RootPageState extends State<RootPage> with SingleTickerProviderStateMixin
         children: [
           // Tab 1: Home
           Container(
-            child: Center(
+            child: const Center(
               child: Text("Home Tab"),
             ),
           ),
           // Tab 2: Shop
           Container(
-            child: Center(
+            child: const Center(
               child: Text("Shop Tab"),
             ),
           ),
           // Tab 3: Prenotazioni
           Container(
-            child: Center(
+            child: const Center(
               child: Text("Prenotazioni Tab"),
             ),
           ),
           // Tab 4: Contatti
           Container(
-            child: Center(
+            child: const Center(
               child: Text("Contatti Tab"),
             ),
           ),
           // Tab 5: Logout
           Container(
-            child: Center(
+            child: const Center(
               child: Text("Logout Tab"),
             ),
           ),
@@ -83,6 +85,6 @@ void main() {
       primarySwatch: Colors.green,
       brightness: Brightness.dark,
     ),
-    home: RootPage(),
+    home: const RootPage(),
   ));
 }
