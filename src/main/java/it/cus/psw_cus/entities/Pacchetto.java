@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+
 import java.util.List;
 
 @Getter
@@ -18,11 +19,6 @@ import java.util.List;
 public class Pacchetto {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private int id;
-
-    @Basic
     @Column(name = "ingressi", nullable = false)
     private int ingressi;
 

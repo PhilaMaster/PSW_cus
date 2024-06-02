@@ -32,9 +32,10 @@ public class Utente {
     @Column(name = "sesso", length = 25)
     private Sesso sesso;
 
-    @Basic
-    @Column(name = "ingressi", nullable = false)
-    private int numIngressi;
+//    non mi serve, ottengo l'informazione dalla lista di abbonamenti
+//    @Basic
+//    @Column(name = "ingressi", nullable = false)
+//    private int numIngressi;
 
     @OneToMany(mappedBy="utente", cascade = CascadeType.MERGE )
     @JsonIgnore
