@@ -1,7 +1,7 @@
-package it.cus.psw_cus.home.services;
+package it.cus.psw_cus.services;
 
 import it.cus.psw_cus.entities.Utente;
-import it.cus.psw_cus.home.repositories.UtenteRepository;
+import it.cus.psw_cus.repositories.UtenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

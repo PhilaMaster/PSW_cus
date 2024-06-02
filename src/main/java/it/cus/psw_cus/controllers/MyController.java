@@ -1,4 +1,4 @@
-package it.cus.psw_cus.home.controllers;
+package it.cus.psw_cus.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

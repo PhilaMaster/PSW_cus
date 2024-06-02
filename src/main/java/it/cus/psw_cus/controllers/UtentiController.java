@@ -1,7 +1,7 @@
-package it.cus.psw_cus.home.controllers;
+package it.cus.psw_cus.controllers;
 
 import it.cus.psw_cus.entities.Utente;
-import it.cus.psw_cus.home.services.UtenteService;
+import it.cus.psw_cus.services.UtenteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

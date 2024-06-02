@@ -1,4 +1,4 @@
-package it.cus.psw_cus.home.controllers;
+package it.cus.psw_cus.controllers;
 
 import lombok.Getter;
 import lombok.Setter;
