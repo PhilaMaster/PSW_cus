@@ -1,4 +1,4 @@
-package it.cus.psw_cus.controllers;
+package it.cus.psw_cus.support;
 
 
 import lombok.Getter;

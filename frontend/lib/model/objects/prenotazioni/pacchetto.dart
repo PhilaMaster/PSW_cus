@@ -72,7 +72,7 @@ class PacchettoService {
       body: json.encode(pacchetto.toJson()),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       return Pacchetto.fromJson(json.decode(response.body));
     } else if (response.statusCode == 400){
       throw Exception('Pacchetto già esistente');
@@ -81,9 +81,9 @@ class PacchettoService {
     }
   }
 
-  Future<void> updatePacchetto(int id, Pacchetto p) async {
+  Future<void> updatePacchetto(int ingressi, Pacchetto p) async {
     final response = await http.put(
-      Uri.parse('$baseUrl/$id'),
+      Uri.parse('$baseUrl/$ingressi'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

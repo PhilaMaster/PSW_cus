@@ -24,13 +24,13 @@ public class PacchettoController {
     }
 
     @PostMapping
-    public ResponseEntity<String> create(@RequestBody @Valid Pacchetto pacchetto) {
+    public ResponseEntity<?> create(@RequestBody @Valid Pacchetto pacchetto) {
         try {
-            pacchettoService.createPacchetto(pacchetto);
+            Pacchetto ret = pacchettoService.createPacchetto(pacchetto);
+            return new ResponseEntity<>(ret, HttpStatus.CREATED);
         } catch (PackageAlreadyExistsException e) {
             return new ResponseEntity<>("Pacchetto già esistente", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("Pacchetto creato con successo", HttpStatus.OK);
     }
 
     @PutMapping
@@ -68,12 +68,8 @@ public class PacchettoController {
     }
 
     @DeleteMapping("/{ingressi}")
-    public ResponseEntity<String> delete(@PathVariable int ingressi) {
-        try {
-            pacchettoService.deletePacchetto(ingressi);
-        } catch (PackageNotFoundException e) {
-            return new ResponseEntity<>("Pacchetto non trovato", HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<String> delete(@PathVariable int ingressi) throws PackageNotFoundException {
+        pacchettoService.deletePacchetto(ingressi);
         return new ResponseEntity<>("Pacchetto eliminato con successo", HttpStatus.OK);
     }
 }

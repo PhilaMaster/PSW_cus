@@ -34,10 +34,10 @@ public class PacchettoService {
     }
 
     @Transactional
-    public void createPacchetto(Pacchetto p) throws PackageAlreadyExistsException {
+    public Pacchetto createPacchetto(Pacchetto p) throws PackageAlreadyExistsException {
         if(pacchettoRepository.existsById(p.getIngressi()))
             throw new PackageAlreadyExistsException();
-        pacchettoRepository.save(p);
+        return pacchettoRepository.save(p);
     }
 
     @Transactional

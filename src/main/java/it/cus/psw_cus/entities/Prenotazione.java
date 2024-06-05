@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -35,6 +37,10 @@ public class Prenotazione {
     @Basic
     @Column(name = "fascia_oraria", length = 5)//formato: 10-12, 12-14, ecc.
     private String fasciaOraria;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "data")
+    private Date data;
 
     @Version
     private int version;

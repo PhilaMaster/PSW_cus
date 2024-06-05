@@ -1,5 +1,7 @@
 package it.cus.psw_cus.controllers;
 
+import it.cus.psw_cus.support.MyRequest;
+import it.cus.psw_cus.support.MyResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
