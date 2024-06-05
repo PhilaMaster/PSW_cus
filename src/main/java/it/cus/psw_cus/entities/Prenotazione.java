@@ -35,4 +35,7 @@ public class Prenotazione {
     @Basic
     @Column(name = "fascia_oraria", length = 5)//formato: 10-12, 12-14, ecc.
     private String fasciaOraria;
+
+    @Version
+    private int version;
 }
