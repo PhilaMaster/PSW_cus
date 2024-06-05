@@ -27,9 +27,9 @@ public class PrenotazioneService {
     }
 
     @Transactional
-    public Prenotazione create(Prenotazione prenotazione) throws SalaFullException, SalaNotFoundException {
-        if (salaService.isDisponibile(prenotazione.getSala().getId(), prenotazione.getData()))
-            return prenotazioneRepository.save(prenotazione);
+    public Prenotazione create(Prenotazione p) throws SalaFullException, SalaNotFoundException {
+        if (salaService.isDisponibile(p.getSala().getId(), p.getData(), p.getFasciaOraria()))
+            return prenotazioneRepository.save(p);
         throw new SalaFullException();
     }
 }

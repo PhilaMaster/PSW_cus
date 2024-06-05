@@ -1,5 +1,6 @@
 package it.cus.psw_cus.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -34,14 +35,37 @@ public class Prenotazione {
     // due interi, ora inizio e ora fine
     // datetime
     // stringa, da gestire assieme a frontend
-    @Basic
-    @Column(name = "fascia_oraria", length = 5)//formato: 10-12, 12-14, ecc.
-    private String fasciaOraria;
+//    @Basic
+//    @Column(name = "fascia_oraria", length = 5)//formato: 10-12, 12-14, ecc.
+//    private String fasciaOraria;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "fascia_oraria", nullable = false)
+    private FasciaOraria fasciaOraria;
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "data")
+    @Column(name = "data", nullable = false)
     private Date data;
 
     @Version
     private int version;
+
+    @Getter
+    public enum FasciaOraria {
+        DIECI_DODICI("10-12"),
+        DODICI_QUATTORDICI("12-14"),
+        QUATTORDICI_SEDICI("14-16"),
+        SEDICI_DICIOTTO("16-18"),
+        DICIOTTO_VENTI("18-20"),
+        VENTI_VENTIDUE("20-22");
+
+        private final String orario;
+
+        FasciaOraria(String orario) {
+            this.orario = orario;
+        }
+
+        public String toString(){
+            return orario;
+        }
+    }
 }

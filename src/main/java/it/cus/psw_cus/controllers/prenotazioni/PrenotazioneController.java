@@ -35,4 +35,6 @@ public class PrenotazioneController {
             return new ResponseEntity<>("Sala non trovata", HttpStatus.BAD_REQUEST);
         }
     }
+
+
 }
