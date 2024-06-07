@@ -6,6 +6,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      automaticallyImplyLeading: false,
       title: const Text('Cus cosenza'),
       actions: <Widget>[
         TextButton(
@@ -18,18 +19,18 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
           onPressed: () {
             Navigator.pushNamed(context, '/prenota');
           },
-          child: Text('Prenota', style: TextStyle(color: Colors.white)),
+          child: const Text('Prenota', style: TextStyle(color: Colors.white)),
         ),
         TextButton(
           onPressed: () {
             Navigator.pushNamed(context, '/shop');
           },
-          child: Text('Shop', style: TextStyle(color: Colors.white)),
+          child: const Text('Shop', style: TextStyle(color: Colors.white)),
         ),
       ],
     );
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

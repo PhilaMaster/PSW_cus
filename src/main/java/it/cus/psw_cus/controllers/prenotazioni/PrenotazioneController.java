@@ -4,6 +4,7 @@ import it.cus.psw_cus.entities.Prenotazione;
 import it.cus.psw_cus.services.prenotazioni.PrenotazioneService;
 import it.cus.psw_cus.support.exceptions.SalaFullException;
 import it.cus.psw_cus.support.exceptions.SalaNotFoundException;
+import it.cus.psw_cus.support.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,5 +41,21 @@ public class PrenotazioneController {
         return prenotazioneService.findAll();
     }
 
+    @GetMapping("/utente/future/{idUtente}")
+    public List<Prenotazione> getFutureUtente(@PathVariable int idUtente){
+        try{
+            return prenotazioneService.getPrenotazioniUtenteFuture(idUtente);
+        } catch (UserNotFoundException e) {
+            throw new RuntimeException(e);//l'utente è loggato, dovrebbe non entrare mai nel catch poichè esiste sicuramente
+        }
+    }
 
+    @GetMapping("/utente/{idUtente}")
+    public List<Prenotazione> getAllUtente(@PathVariable int idUtente){
+        try{
+            return prenotazioneService.getPrenotazioniUtente(idUtente);
+        } catch (UserNotFoundException e) {
+            throw new RuntimeException(e);//l'utente è loggato, dovrebbe non entrare mai nel catch poichè esiste sicuramente
+        }
+    }
 }

@@ -1,7 +1,9 @@
+import 'dart:convert';
+
 import 'package:frontend/model/objects/prenotazioni/sala.dart';
 
 import '../utente.dart';
-
+import 'package:http/http.dart' as http;
 
 class Prenotazione{
   final int id;
@@ -34,7 +36,8 @@ class Prenotazione{
       'utente': utente.toJson(),
       'sala': sala.toJson(),
       'fasciaOraria': fasciaOraria.toString(),
-      'data': data.toIso8601String(),
+      // 'data': data.toIso8601String(),
+      'data': data.toIso8601String().split(" ")[0],//TODO testare se funziona. Prendo la prima parte, ovvero solo data senza ora
     };
   }
 
@@ -73,38 +76,90 @@ extension FasciaOrariaExtension on FasciaOraria {
   String get orario {
     switch (this) {
       case FasciaOraria.DIECI_DODICI:
-        return '10-12';
+        return '10:00-12:00';
       case FasciaOraria.DODICI_QUATTORDICI:
-        return '12-14';
+        return '12:00-14:00';
       case FasciaOraria.QUATTORDICI_SEDICI:
-        return '14-16';
+        return '14:00-16:00';
       case FasciaOraria.SEDICI_DICIOTTO:
-        return '16-18';
+        return '16:00-18:00';
       case FasciaOraria.DICIOTTO_VENTI:
-        return '18-20';
+        return '18:00-20:00';
       case FasciaOraria.VENTI_VENTIDUE:
-        return '20-22';
+        return '20:00-22:00';
       default:
-        return '';
+        return 'Orario non valido';
     }
   }
 
   static FasciaOraria fromString(String orario) {
     switch (orario) {
-      case '10-12':
+      case 'DIECI_DODICI':
         return FasciaOraria.DIECI_DODICI;
-      case '12-14':
+      case 'DODICI_QUATTORDICI':
         return FasciaOraria.DODICI_QUATTORDICI;
-      case '14-16':
+      case 'QUATTORDICI_SEDICI':
         return FasciaOraria.QUATTORDICI_SEDICI;
-      case '16-18':
+      case 'SEDICI_DICIOTTO':
         return FasciaOraria.SEDICI_DICIOTTO;
-      case '18-20':
+      case 'DICIOTTO_VENTI':
         return FasciaOraria.DICIOTTO_VENTI;
-      case '20-22':
+      case 'VENTI_VENTIDUE':
         return FasciaOraria.VENTI_VENTIDUE;
       default:
         throw Exception('FasciaOraria non valida: $orario');
+    }
+  }
+}
+
+class PrenotazioneService {
+  static const String baseUrl = 'http://localhost:8080/api/prenotazioni';
+
+  static Future<List<Prenotazione>> getAllPrenotazioni() async {
+    final response = await http.get(Uri.parse(baseUrl));
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body);
+      return jsonResponse.map((prenotazione) => Prenotazione.fromJson(prenotazione)).toList();
+    } else {
+      throw Exception('Impossibile caricare le prenotazioni');
+    }
+  }
+
+  static Future<List<Prenotazione>> getPrenotazioniFutureUtente(int idUtente) async {
+    final response = await http.get(Uri.parse('$baseUrl/utente/future/$idUtente'));
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body);
+      return jsonResponse.map((prenotazione) => Prenotazione.fromJson(prenotazione)).toList();
+    } else {
+      throw Exception('Impossibile caricare prenotazioni future per l\'utente $idUtente');
+    }
+  }
+
+  static Future<List<Prenotazione>> getPrenotazioniUtente(int idUtente) async {
+    final response = await http.get(Uri.parse('$baseUrl/utente/$idUtente'));
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body);
+      return jsonResponse.map((prenotazione) => Prenotazione.fromJson(prenotazione)).toList();
+    } else {
+      throw Exception('Impossibile caricare prenotazioni future per l\'utente $idUtente');
+    }
+  }
+
+  static Future<String> createPrenotazione(Prenotazione prenotazione) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/prenotazioni'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(prenotazione.toJson()),
+    );
+
+    if (response.statusCode == 201) {
+      return 'Prenotazione creata con successo';
+    } else if (response.statusCode == 400) {
+      return response.body;
+    } else {
+      throw Exception('Impossibile creare la prenotazione');
     }
   }
 }

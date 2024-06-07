@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.green,
           brightness: Brightness.dark,
         ),
-      home: const Home(),
+      home: const HomePage(),
       routes: {
         '/abbonamenti': (context) => Abbonamenti(),
         '/prenota': (context) => const Prenota(),

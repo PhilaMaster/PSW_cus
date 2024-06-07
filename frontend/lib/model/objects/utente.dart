@@ -10,7 +10,7 @@ class Utente{
       id: json['id'],
       nome: json['nome'],
       cognome: json['cognome'],
-      sesso: json['sesso']
+      sesso: SessoExtension.fromString(json['sesso'])
     );
   }
 
@@ -18,7 +18,7 @@ class Utente{
     'id': id,
     'nome': nome,
     'cognome':cognome,
-    'sesso':sesso
+    'sesso':sesso.toString()//TODO dovrebbe andare poichè le ho scritte in maiuscolo ma è comunque da testare
   };
 
   @override
@@ -27,4 +27,19 @@ class Utente{
   }
 }
 
-enum Sesso{maschio,femmina,altro}//TODO controllare se le maiuscole vanno bene, magari usare approccio simile a quello in prenotazione con fasciaoraria se non va
+enum Sesso{MASCHIO,FEMMINA,ALTRO}
+
+extension SessoExtension on Sesso {
+  static Sesso fromString(String s) {
+    switch (s) {
+      case 'MASCHIO':
+        return Sesso.MASCHIO;
+      case 'FEMMINA':
+        return Sesso.FEMMINA;
+      case 'ALTRO':
+        return Sesso.ALTRO;
+      default:
+        throw Exception('Sesso non valido: $s');
+    }
+  }
+}

@@ -3,10 +3,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class Sala{
-  final int id;
-  final int nome;
-  final int capienza;
-  final int indirizzo;
+  final int id,capienza;
+  final String nome,indirizzo;
 
   Sala({required this.id, required this.nome, required this.capienza, required this.indirizzo});
 
@@ -33,7 +31,7 @@ class Sala{
 }
 
 class SalaService{
-  final String baseUrl = 'http://localhost:8080/api/sale';
+  static const String baseUrl = 'http://localhost:8080/api/sale';
 
   Future<List<Sala>> getAllSale() async {
     final response = await http.get(Uri.parse(baseUrl));
@@ -46,7 +44,7 @@ class SalaService{
     }
   }
 
-  Future<Sala> getSalaById(int id) async {
+  static Future<Sala> getSalaById(int id) async {
     final response = await http.get(Uri.parse('$baseUrl/$id'));
 
     if (response.statusCode == 200) {
