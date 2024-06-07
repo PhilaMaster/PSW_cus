@@ -2,6 +2,8 @@ package it.cus.psw_cus.services;
 
 import it.cus.psw_cus.entities.Utente;
 import it.cus.psw_cus.repositories.UtenteRepository;
+import it.cus.psw_cus.repositories.prenotazioni.AbbonamentoRepository;
+import it.cus.psw_cus.repositories.prenotazioni.PrenotazioneRepository;
 import it.cus.psw_cus.support.exceptions.UserAlreadyExistsException;
 import it.cus.psw_cus.support.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +14,12 @@ import java.util.List;
 @Service
 public class UtenteService {
     private final UtenteRepository userRepository;
+    private final AbbonamentoRepository abbonamentoRepository;
 
     @Autowired
-    public UtenteService(UtenteRepository userRepository) {
+    public UtenteService(UtenteRepository userRepository, AbbonamentoRepository abbonamentoRepository) {
         this.userRepository = userRepository;
+        this.abbonamentoRepository = abbonamentoRepository;
     }
 
     public List<Utente> cercaTutti(){
@@ -35,5 +39,9 @@ public class UtenteService {
     public void eliminaUtente(int id) throws UserNotFoundException {
         Utente utente = cercaUtente(id);
         userRepository.delete(utente);
+    }
+
+    public int ingressiUtente(int id) throws UserNotFoundException {
+        return abbonamentoRepository.contaIngressiRimanentiUtente(cercaUtente(id));
     }
 }

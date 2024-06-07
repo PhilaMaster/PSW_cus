@@ -13,7 +13,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/utenti")
 public class UtentiController {
     private final UtenteService userService;
 
@@ -30,6 +30,11 @@ public class UtentiController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getUser(@PathVariable int id) throws UserNotFoundException {
         return new ResponseEntity<>(userService.cercaUtente(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/ingressi")
+    public ResponseEntity<?> getUserIngressiRimanenti(@PathVariable int id) throws UserNotFoundException {
+        return new ResponseEntity<>(userService.ingressiUtente(id), HttpStatus.OK);
     }
 
     @ExceptionHandler(UserNotFoundException.class)

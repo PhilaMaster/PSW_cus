@@ -66,27 +66,27 @@ public class SalaService {
         salaRepository.save(s);
     }
 
-    @Transactional(readOnly = true)
-    public boolean isDisponibile(int id, Date data, Prenotazione.FasciaOraria fasciaOraria) throws SalaNotFoundException {
-        Sala sala = getSalaById(id);
-        int c = sala.getCapienza();
-        for(Prenotazione p: sala.getPrenotazioni())
-//            System.out.println("controllo:"+p.getData()+" "+p.getFasciaOraria()+"||"+data+" "+fasciaOraria);
-            if ((p.getFasciaOraria() == fasciaOraria) && sameDay(p.getData(),data))
-                c--;
-
-        return c>0;
-    }
-
-    private boolean sameDay(Date date1, Date date2) {
-        Calendar cal1 = Calendar.getInstance();
-        Calendar cal2 = Calendar.getInstance();
-        cal1.setTime(date1);
-        cal2.setTime(date2);
-
-        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-                cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH) &&
-                cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH);
-    }
+//    @Transactional(readOnly = true)
+//    public boolean isDisponibile(int id, Date data, Prenotazione.FasciaOraria fasciaOraria) throws SalaNotFoundException {
+//        Sala sala = getSalaById(id);
+//        int c = sala.getCapienza();
+//        for(Prenotazione p: sala.getPrenotazioni())
+////            System.out.println("controllo:"+p.getData()+" "+p.getFasciaOraria()+"||"+data+" "+fasciaOraria);
+//            if ((p.getFasciaOraria() == fasciaOraria) && sameDay(p.getData(),data))
+//                c--;
+//
+//        return c>0;
+//    }
+//
+//    private boolean sameDay(Date date1, Date date2) {
+//        Calendar cal1 = Calendar.getInstance();
+//        Calendar cal2 = Calendar.getInstance();
+//        cal1.setTime(date1);
+//        cal2.setTime(date2);
+//
+//        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+//                cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH) &&
+//                cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH);
+//    }
 
 }

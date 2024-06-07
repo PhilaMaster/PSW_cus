@@ -63,12 +63,12 @@ public class    SalaController {
     }
 
     //TODO rimuovere questo metodo o serve?
-    @GetMapping("/{id}/disponibile")
-    public ResponseEntity<Boolean> isDisponibile(@PathVariable int id,
-                 @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date data,
-                 @RequestParam("fascia_oraria") Prenotazione.FasciaOraria fasciaOraria) throws SalaNotFoundException {//TODO forse qui va @enumeration
-        return new ResponseEntity<>(salaService.isDisponibile(id,data,fasciaOraria), HttpStatus.OK);
-    }
+//    @GetMapping("/{id}/disponibile")
+//    public ResponseEntity<Boolean> isDisponibile(@PathVariable int id,
+//                 @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date data,
+//                 @RequestParam("fascia_oraria") Prenotazione.FasciaOraria fasciaOraria) throws SalaNotFoundException {//TODO forse qui va @enumeration
+//        return new ResponseEntity<>(salaService.isDisponibile(id,data,fasciaOraria), HttpStatus.OK);
+//    }
 
 
 }
