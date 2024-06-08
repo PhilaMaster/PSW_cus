@@ -46,7 +46,7 @@ public class PrenotazioneController {
         try{
             return prenotazioneService.getPrenotazioniUtenteFuture(idUtente);
         } catch (UserNotFoundException e) {
-            throw new RuntimeException(e);//l'utente è loggato, dovrebbe non entrare mai nel catch poichè esiste sicuramente
+            throw new RuntimeException("Utente non trovato");//l'utente è loggato, dovrebbe non entrare mai nel catch poichè esiste sicuramente
         }
     }
 
@@ -55,7 +55,7 @@ public class PrenotazioneController {
         try{
             return prenotazioneService.getPrenotazioniUtente(idUtente);
         } catch (UserNotFoundException e) {
-            throw new RuntimeException(e);//l'utente è loggato, dovrebbe non entrare mai nel catch poichè esiste sicuramente
+            throw new RuntimeException("Utente non trovato");//l'utente è loggato, dovrebbe non entrare mai nel catch poichè esiste sicuramente
         }
     }
 }

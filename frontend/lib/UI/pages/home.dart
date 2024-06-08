@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 16),
             const Text(
-              'Le tue prenotazioni:',
+              'Ecco le tue prenotazioni:',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
@@ -61,14 +61,15 @@ class _HomePageState extends State<HomePage> {
                   return const Center(child: Text('Nessuna prenotazione trovata.'));
                 } else {
 
-                  // return Column(
-                  //   children: [
-                  //     Expanded(
-                  //       child: SingleChildScrollView(
-                  //         scrollDirection: Axis.vertical,
-                  //         child:
-
-                          return DataTable(
+                  return SizedBox(
+                    height: 600,
+                    width: MediaQuery.of(context).size.width,//allarga quanto lo schermo
+                    child:
+                      Expanded(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child:
+                          DataTable(
                             columns: const [
                               DataColumn(label: Text('Sala')),
                               DataColumn(label: Text('Data')),
@@ -81,12 +82,12 @@ class _HomePageState extends State<HomePage> {
                                 DataCell(Text(prenotazione.fasciaOraria.orario)),
                               ]);
                             }).toList(),
-                          );
+                          )
 
-                  //       )
-                  //     )
-                  //   ],
-                  // );
+                        )
+                      )
+
+                  );
 
                 }
               },
