@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         ),
       home: const HomePage(),
       routes: {
-        '/abbonamenti': (context) => Abbonamenti(),
+        '/abbonamenti': (context) => const Abbonamenti(),
         '/prenota': (context) => const Prenota(),
         '/shop': (context) => const Shop(),
       },

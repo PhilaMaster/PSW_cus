@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.Date;
+
 @Entity
 @Getter
 @Setter
@@ -22,6 +24,10 @@ public class Abbonamento {
     @Column(name = "rimanenti")
     private int rimanenti;
 
+    @Temporal(TemporalType.DATE)
+    @Column(name = "data_acquisto")
+    private Date dataAcquisto = new Date();
+
     @ManyToOne
     @JoinColumn(name = "utente")
     private Utente utente;
@@ -29,4 +35,9 @@ public class Abbonamento {
     @ManyToOne
     @JoinColumn(name = "pacchetto")
     private Pacchetto pacchetto;
+
+    @PostPersist
+    private void postPersist() {
+        this.rimanenti = pacchetto.getIngressi();
+    }
 }

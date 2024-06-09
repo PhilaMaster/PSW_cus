@@ -1,12 +1,16 @@
 import '../utente.dart';
 import 'pacchetto.dart';
 
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
 class Abbonamento{
   final int id;
   final int rimanenti;
   final Pacchetto pacchetto;
   final Utente utente;
-  Abbonamento({required this.id, required this.rimanenti, required this.pacchetto, required this.utente});
+  final DateTime dataAcquisto;
+  Abbonamento({required this.id, required this.rimanenti, required this.pacchetto, required this.utente, required this.dataAcquisto});
 
   factory Abbonamento.fromJson(Map<String, dynamic> json) {
     return Abbonamento(
@@ -14,6 +18,7 @@ class Abbonamento{
       rimanenti: json['rimanenti'],
       pacchetto: Pacchetto.fromJson(json['pacchetto']),
       utente: Utente.fromJson(json['utente']),
+      dataAcquisto: DateTime.parse(json['dataAcquisto']),
     );
   }
 
@@ -22,6 +27,7 @@ class Abbonamento{
     'rimanenti': rimanenti,
     'pacchetto':pacchetto.toJson(),
     'utente':utente.toJson(),
+    'dataAcquisto': dataAcquisto.toIso8601String().split(" ")[0],//TODO testare se funziona. Prendo la prima parte, ovvero solo data senza ora
   };
 
   @override
@@ -29,5 +35,88 @@ class Abbonamento{
     return "Abbonamento [$id], ingressi rimanenti: $rimanenti"
         "di $utente, "
         "pacchetto $pacchetto";
+  }
+}
+
+
+class AbbonamentoService {
+  static const String _baseUrl = "http://localhost:8080/api/abbonamenti";
+
+
+  static Future<List<Abbonamento>> getAllAbbonamenti() async {
+    final response = await http.get(Uri.parse(_baseUrl));
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body);
+      return jsonResponse.map((abbonamento) => Abbonamento.fromJson(abbonamento)).toList();
+    } else {
+      throw Exception('Impossibile caricare gli abbonamenti');
+    }
+  }
+
+  Future<Abbonamento> getAbbonamentoById(int id) async {
+    final response = await http.get(Uri.parse('$_baseUrl/$id'));
+    if (response.statusCode == 200) {
+      return Abbonamento.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Impossibile caricare l\'abbonamento');
+    }
+  }
+
+  Future<Abbonamento> createAbbonamento(Abbonamento abbonamento) async {
+    final response = await http.post(
+      Uri.parse('$_baseUrl/api/abbonamenti'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(abbonamento.toJson()),
+    );
+    if (response.statusCode == 201) {
+      return Abbonamento.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Impossibile creare l\'abbonamento');
+    }
+  }
+
+  // Future<Abbonamento> updateAbbonamento(int id, Abbonamento abbonamento) async {
+  //   final response = await http.put(
+  //     Uri.parse('$_baseUrl/$id'),
+  //     headers: {'Content-Type': 'application/json'},
+  //     body: json.encode(abbonamento.toJson()),
+  //   );
+  //   if (response.statusCode == 200) {
+  //     return Abbonamento.fromJson(json.decode(response.body));
+  //   } else {
+  //     throw Exception('Failed to update abbonamento');
+  //   }
+  // }
+
+  Future<void> deleteAbbonamento(int id) async {
+    final response = await http.delete(Uri.parse('$_baseUrl/$id'));
+    if (response.statusCode != 204) {
+      throw Exception('Impossibile eliminare l\'abbonamento');
+    }
+  }
+
+  Future<List<Abbonamento>> getAbbonamentiByUtente(int utenteId) async {
+    final response = await http.get(Uri.parse('$_baseUrl/utente/$utenteId'));
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body);
+      return jsonResponse.map((abbonamento) => Abbonamento.fromJson(abbonamento)).toList();
+    }else if (response.statusCode == 404){
+      throw Exception('Non trovato');
+    }
+    else {
+      throw Exception('Impossibile caricare gli abbonamenti per l\'utente con id:$utenteId');
+    }
+  }
+
+  Future<List<Abbonamento>> getAbbonamentiByUtenteWithPositiveRimanenti(int utenteId) async {
+    final response = await http.get(Uri.parse('$_baseUrl/utente/$utenteId/coningressi'));
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body);
+      return jsonResponse.map((abbonamento) => Abbonamento.fromJson(abbonamento)).toList();
+    }else if (response.statusCode == 404){
+      throw Exception('Non trovato');
+    } else {
+      throw Exception('Impossibile caricare gli abbonamenti con ingressi per l\'utente con id:$utenteId');
+    }
   }
 }

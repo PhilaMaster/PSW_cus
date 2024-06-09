@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 
 class Pacchetto{
   final int ingressi;
-  final int prezzoUnitario;
+  final double prezzoUnitario;
 
   Pacchetto({required this.ingressi, required this.prezzoUnitario});
 

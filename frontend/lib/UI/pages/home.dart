@@ -45,6 +45,27 @@ class _HomePageState extends State<HomePage> {
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
+            FutureBuilder(future: UtenteService.getIngressi(utenteLoggato.id),
+                builder: (context,snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator(); // Mostra un indicatore di progresso durante il caricamento
+                  } else if (snapshot.hasError) {
+                    return Text('I tuoi ingressi sono: Errore: ${snapshot.error} (solo per debug)'); // Gestisce eventuali errori
+                  } else if (snapshot.hasData) {
+                    final int? ingressi = snapshot.data;
+                    return Text('Ti restano in totale $ingressi ingressi${continua(ingressi)}.'); // Mostra il valore recuperato
+                  } else {
+                    return const SizedBox(height: 16); // Gestisce il caso in cui non ci siano dati
+                  }
+                }
+            ),
+            // Text(
+            //   'Ti restano in totale ${UtenteService.getIngressi(utenteLoggato.id)}',
+            //   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            // ),
+            const SizedBox(height: 16),
+            const Divider(),
+            const SizedBox(height: 16),
             const Text(
               'Ecco le tue prenotazioni:',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
@@ -109,6 +130,13 @@ class _HomePageState extends State<HomePage> {
 
       ),
     );
+  }
+
+  String continua(int? ingressi) {
+    if(ingressi!>10) {
+      return '';
+    }
+    return ', compra altri ingressi nella sezione "Abbonamenti"';
   }
 }
 

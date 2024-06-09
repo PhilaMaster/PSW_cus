@@ -1,11 +1,14 @@
 
 
+// ignore_for_file: avoid_unnecessary_containers
+
 import 'package:flutter/material.dart';
 
 class RootPage extends StatefulWidget {
   const RootPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _RootPageState createState() => _RootPageState();
 }
 

@@ -1,3 +1,10 @@
+// ignore_for_file: constant_identifier_names
+
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
+
+
 class Utente{
   final int id;
   final String nome, cognome;
@@ -42,4 +49,19 @@ extension SessoExtension on Sesso {
         throw Exception('Sesso non valido: $s');
     }
   }
+}
+
+class UtenteService{
+  static const String _baseUrl = 'http://localhost:8080/api/utenti';
+
+  static Future<int> getIngressi(int id) async{
+    final response = await http.get(Uri.parse('$_baseUrl/$id/ingressi'));
+
+    if (response.statusCode == 200) {
+      return int.parse(response.body);
+    } else {
+      throw Exception('Impossibile richiedere num ingressi rimanenti');
+    }
+  }
+
 }
