@@ -2,6 +2,7 @@ package it.cus.psw_cus.controllers.prenotazioni;
 
 import it.cus.psw_cus.entities.Prenotazione;
 import it.cus.psw_cus.entities.Sala;
+import it.cus.psw_cus.services.prenotazioni.PrenotazioneService;
 import it.cus.psw_cus.services.prenotazioni.SalaService;
 import it.cus.psw_cus.support.exceptions.SalaAlreadyExistsException;
 import it.cus.psw_cus.support.exceptions.SalaNotFoundException;
@@ -10,8 +11,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.text.DateFormat;
 
 import javax.validation.Valid;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -19,10 +24,13 @@ import java.util.List;
 @RequestMapping("/api/sale")
 public class    SalaController {
     private final SalaService salaService;
+    private final PrenotazioneService prenotazioneService;
+//    private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
     @Autowired
-    public SalaController(SalaService salaService) {
+    public SalaController(SalaService salaService, PrenotazioneService prenotazioneService) {
         this.salaService = salaService;
+        this.prenotazioneService = prenotazioneService;
     }
 
     @PostMapping
@@ -70,5 +78,17 @@ public class    SalaController {
 //        return new ResponseEntity<>(salaService.isDisponibile(id,data,fasciaOraria), HttpStatus.OK);
 //    }
 
-
+    @GetMapping("/{id}/postiOccupati")
+    public ResponseEntity<Integer> getPostiOccupati(@PathVariable int id,
+                                                    @RequestParam Prenotazione.FasciaOraria fasciaOraria,
+                                                    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date data) throws SalaNotFoundException {
+        Prenotazione p = new Prenotazione();
+        Sala s = new Sala();
+        s.setId(id);
+        p.setSala(s);
+        p.setFasciaOraria(fasciaOraria);
+//        p.setData(formatter.parse(data));
+        p.setData(data);
+        return new ResponseEntity<>(prenotazioneService.postiOccupati(p), HttpStatus.OK);
+    }
 }

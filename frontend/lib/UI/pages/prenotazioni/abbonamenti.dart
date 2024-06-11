@@ -25,24 +25,25 @@ class _AbbonamentiState extends State<Abbonamenti> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text('Abbonamenti Palestra'),
-      // ),
+      appBar: AppBar(
+        title: const Text('Abbonamenti'),
+        automaticallyImplyLeading: false,
+      ),
       body:
       Padding(
-      padding: const EdgeInsets.all(16.0),
-      child:Column(
-        children: [
+        padding: const EdgeInsets.all(16.0),
+        child:Column(
+          children: [
             Text(
               '${utenteLoggato.nome}, in questa pagina puoi trovare i pacchetti disponibili e gli abbonamenti che hai sottoscritto',
-              style: const TextStyle(fontSize: 24),
+              style: const TextStyle(fontSize: 18),
                 ),
               const SizedBox(height: 16),
               const Text(
                 'Pacchetti disponibili:',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
               ),
-            Expanded(
+            Expanded(//TODO aggiungere scrollbar
               child: FutureBuilder<List<Pacchetto>>(
                 future: futurePacchetti,
                 builder: (context, snapshot) {
@@ -86,14 +87,14 @@ class _AbbonamentiState extends State<Abbonamenti> {
               'Abbonamenti sottoscritti:',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
-            Expanded(
+            Expanded(//TODO aggiungere scrollbar
               child: FutureBuilder<List<Abbonamento>>(
                 future: futureAbbonamenti,
                 builder: (context,snapshot){
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Errore nel caricamento degli abbonamenti ${snapshot.error} (debug)'));
+                    return Center(child: Text('Errore nel caricamento degli abbonamenti ${snapshot.error} (debug)'));//TODO debug
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return const Center(child: Text('Non hai sottoscritto alcun abbonamento'));
                   } else {

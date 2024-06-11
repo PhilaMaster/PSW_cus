@@ -33,7 +33,7 @@ class Sala{
 class SalaService{
   static const String baseUrl = 'http://localhost:8080/api/sale';
 
-  Future<List<Sala>> getAllSale() async {
+  static Future<List<Sala>> getAllSale() async {
     final response = await http.get(Uri.parse(baseUrl));
 
     if (response.statusCode == 200) {
@@ -56,7 +56,7 @@ class SalaService{
     }
   }
 
-  Future<Sala> createSala(Sala sala) async {
+  static Future<Sala> createSala(Sala sala) async {
     final response = await http.post(
       Uri.parse(baseUrl),
       headers: <String, String>{
@@ -74,7 +74,7 @@ class SalaService{
     }
   }
 
-  Future<void> updateSala(int id, Sala s) async {
+  static Future<void> updateSala(int id, Sala s) async {
     final response = await http.put(
       Uri.parse('$baseUrl/$id'),
       headers: <String, String>{
@@ -90,7 +90,7 @@ class SalaService{
     }
   }
 
-  Future<void> deleteSala(int id) async {
+  static Future<void> deleteSala(int id) async {
     final response = await http.delete(Uri.parse('$baseUrl/$id'));
 
     if (response.statusCode == 404) {

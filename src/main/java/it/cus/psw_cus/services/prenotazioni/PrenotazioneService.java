@@ -64,7 +64,13 @@ public class PrenotazioneService {
     private boolean salaDisponibile(Prenotazione p) throws SalaNotFoundException {
         Sala sala = salaRepository.findById(p.getSala().getId()).orElseThrow(SalaNotFoundException::new);
         int c1 = sala.getCapienza();
-        int c2 = prenotazioneRepository.countPrenotazioniByDataAndFasciaOrariaAndSala(p.getData(),p.getFasciaOraria(),p.getSala());
+        int c2 = prenotazioneRepository.countPrenotazioniByDataAndFasciaOrariaAndSala(p.getData(),p.getFasciaOraria(),sala);
         return c1>c2;
+    }
+
+    @Transactional(readOnly = true)
+    public int postiOccupati(Prenotazione p) throws SalaNotFoundException {
+        Sala sala = salaRepository.findById(p.getSala().getId()).orElseThrow(SalaNotFoundException::new);
+        return prenotazioneRepository.countPrenotazioniByDataAndFasciaOrariaAndSala(p.getData(),p.getFasciaOraria(),sala);
     }
 }
