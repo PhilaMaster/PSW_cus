@@ -1,93 +1,31 @@
-
-
-// ignore_for_file: avoid_unnecessary_containers
-
 import 'package:flutter/material.dart';
 
-class RootPage extends StatefulWidget {
-  const RootPage({super.key});
+import 'UI/pages/home.dart';
+import 'UI/pages/prenotazioni/abbonamenti.dart';
+import 'UI/pages/prenotazioni/prenota.dart';
+import 'UI/pages/shop/shop.dart';
 
-  @override
-  // ignore: library_private_types_in_public_api
-  _RootPageState createState() => _RootPageState();
+void main() {
+  runApp(const MyApp());
 }
 
-class _RootPageState extends State<RootPage> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 5, vsync: this);
-  }
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("CUS COSENZA"),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(text: "Home"),
-            Tab(text: "Shop"),
-            Tab(text: "Prenotazioni"),
-            Tab(text: "Contatti"),
-            Tab(text: "Logout"),
-          ],
+    return MaterialApp(
+      title: 'Cus cosenza',
+        theme: ThemeData(
+          primarySwatch: Colors.green,
+          brightness: Brightness.dark,
         ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          // Tab 1: Home
-          Container(
-            child: const Center(
-              child: Text("Home Tab"),
-            ),
-          ),
-          // Tab 2: Shop
-          Container(
-            child: const Center(
-              child: Text("Shop Tab"),
-            ),
-          ),
-          // Tab 3: Prenotazioni
-          Container(
-            child: const Center(
-              child: Text("Prenotazioni Tab"),
-            ),
-          ),
-          // Tab 4: Contatti
-          Container(
-            child: const Center(
-              child: Text("Contatti Tab"),
-            ),
-          ),
-          // Tab 5: Logout
-          Container(
-            child: const Center(
-              child: Text("Logout Tab"),
-            ),
-          ),
-        ],
-      ),
+      home: const HomePage(),
+      routes: {
+        '/abbonamenti': (context) => const Abbonamenti(),
+        '/prenota': (context) => const Prenota(),
+        '/shop': (context) => const Shop(),
+      },
     );
   }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-}
-
-void main() {
-  runApp(MaterialApp(
-    theme: ThemeData(
-      primarySwatch: Colors.green,
-      brightness: Brightness.dark,
-    ),
-    home: const RootPage(),
-  ));
 }
