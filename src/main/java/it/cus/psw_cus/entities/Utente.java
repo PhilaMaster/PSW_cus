@@ -7,7 +7,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -40,6 +42,13 @@ public class Utente {
     @JsonIgnore
     private List<Abbonamento> abbonamenti;
 
+    @OneToOne(mappedBy = "utente", cascade = CascadeType.ALL)
+    @JoinColumn(name = "cart_id")
+    @JsonIgnore
+    private Cart cart;
+
+    @OneToMany(mappedBy = "utente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Ordine> ordini = new HashSet<>();
 
     public enum Sesso{
         MASCHIO,FEMMINA,ALTRO

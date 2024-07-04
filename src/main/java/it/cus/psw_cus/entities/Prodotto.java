@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
 
 
 @Entity
@@ -37,6 +38,9 @@ public class Prodotto {
     @Column(name = "descrizione")
     private String descrizione;
 
+    @OneToMany(mappedBy = "prodotto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProdottoCarrello> prodottiCarrello;
+
     @Basic
     @Column(name = "sesso")
     @Enumerated(EnumType.STRING)
@@ -45,17 +49,8 @@ public class Prodotto {
 
     @Getter
     @ToString
-    public enum Sesso {
-        M("Maschio"),
-        F("Femmina"),
-        U("Unisex");
-
-        private final String sesso;
-
-        Sesso(String sesso) {
-            this.sesso = sesso;
-        }
-
+    public enum Sesso{
+        MASCHIO,FEMMINA,UNISEX;
     }
 
 }
