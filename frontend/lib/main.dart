@@ -4,6 +4,7 @@ import 'UI/pages/home.dart';
 import 'UI/pages/prenotazioni/abbonamenti.dart';
 import 'UI/pages/prenotazioni/prenota.dart';
 import 'UI/pages/shop/shop.dart';
+import 'UI/pages/shop/mieiOrdini.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,6 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Cus cosenza',
         theme: ThemeData(
           primarySwatch: Colors.green,
@@ -25,6 +27,7 @@ class MyApp extends StatelessWidget {
         '/abbonamenti': (context) => const Abbonamenti(),
         '/prenota': (context) => const Prenota(),
         '/shop': (context) => const Shop(),
+        '/IMieiOrdini': (context) => const mieiOrdini(),
       },
     );
   }

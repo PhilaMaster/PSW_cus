@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,5 +31,7 @@ public class Cart {
     @OneToMany(mappedBy = "cart", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<ProdottoCarrello> prodotti = new HashSet<>();
 
+    @Version
+    private int version;
 
 }
