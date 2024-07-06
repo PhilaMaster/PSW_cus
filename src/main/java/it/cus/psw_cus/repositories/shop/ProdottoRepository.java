@@ -22,4 +22,6 @@ public interface ProdottoRepository extends JpaRepository<Prodotto,Integer> {
 
     List<Prodotto> findBySesso(Prodotto.Sesso sesso);
 
+    Prodotto findById(int id);
+
 }

@@ -37,14 +37,14 @@ public class OrdineService {
     }
 
     @Transactional
-    public void eliminaOrdine(int id) {
+    public void eliminaOrdine(int id) throws OrdineNotFoundException {
         Ordine ordine = ordineRepository.findById(id)
                 .orElseThrow(OrdineNotFoundException::new);
         ordineRepository.delete(ordine);
     }
 
     @Transactional
-    public Optional<Ordine> trovaOrdinePerUtente(Utente utente) {
+    public Optional<Ordine> trovaOrdinePerUtente(Utente utente) throws OrdineNotFoundException {
         return ordineRepository.findByUtente(utente);
     }
 

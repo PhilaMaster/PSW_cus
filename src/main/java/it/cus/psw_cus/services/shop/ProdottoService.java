@@ -2,6 +2,7 @@ package it.cus.psw_cus.services.shop;
 
 import it.cus.psw_cus.entities.Prodotto;
 import it.cus.psw_cus.repositories.shop.ProdottoRepository;
+import it.cus.psw_cus.support.exceptions.ProdottoEsistenteException;
 import it.cus.psw_cus.support.exceptions.ProdottoNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +22,19 @@ public class ProdottoService {
     }
 
     @Transactional
-    public Prodotto save(Prodotto prodotto) {
+    public Prodotto create(Prodotto prodotto) throws ProdottoEsistenteException {
         return prodottoRepository.save(prodotto);
     }
 
     @Transactional
-    public void deleteProdotto(int id) {
+    public void deleteProdotto(int id) throws ProdottoNotFoundException {
         prodottoRepository.deleteById(id);
     }
 
+    @Transactional
+    public Prodotto findById(int id) throws ProdottoNotFoundException{
+        return prodottoRepository.findById(id);
+    }
 
     @Transactional
     public List<Prodotto> findByNome(String nome) {
@@ -39,6 +44,21 @@ public class ProdottoService {
     @Transactional
     public List<Prodotto> findByPrezzoBetween(double prezzoMin, double prezzoMax) {
         return prodottoRepository.findByPrezzoBetween(prezzoMin, prezzoMax);
+    }
+
+    @Transactional
+    public Prodotto updateProdotto(int id, Prodotto prodottoDettagli) throws ProdottoNotFoundException {
+        Prodotto prodotto = prodottoRepository.findById(id);
+
+        prodotto.setNome(prodottoDettagli.getNome());
+        prodotto.setPrezzo(prodottoDettagli.getPrezzo());
+        prodotto.setCategoria(prodottoDettagli.getCategoria());
+        prodotto.setDescrizione(prodottoDettagli.getDescrizione());
+        prodotto.setSesso(prodottoDettagli.getSesso());
+        prodotto.setProdottiCarrello(prodottoDettagli.getProdottiCarrello());
+
+        // Salva e ritorna il prodotto aggiornato
+        return prodottoRepository.save(prodotto);
     }
 
     @Transactional
