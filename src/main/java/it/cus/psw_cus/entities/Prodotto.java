@@ -1,6 +1,7 @@
 package it.cus.psw_cus.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -39,6 +40,7 @@ public class Prodotto {
     private String descrizione;
 
     @OneToMany(mappedBy = "prodotto", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<ProdottoCarrello> prodottiCarrello;
 
     @Basic

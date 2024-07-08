@@ -27,6 +27,18 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
           },
           child: const Text('Shop', style: TextStyle(color: Colors.white)),
         ),
+        TextButton(
+          onPressed: () {
+            Navigator.pushNamed(context, '/ordini');
+          },
+          child: const Text('I miei ordini', style: TextStyle(color: Colors.white)),
+        ),
+        IconButton(
+          onPressed: () {
+            Navigator.pushNamed(context, '/carrello');
+          },
+          icon: const Icon(Icons.shopping_cart, color: Colors.white),
+        ),
       ],
     );
   }

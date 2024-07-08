@@ -57,7 +57,6 @@ public class ProdottoService {
         prodotto.setSesso(prodottoDettagli.getSesso());
         prodotto.setProdottiCarrello(prodottoDettagli.getProdottiCarrello());
 
-        // Salva e ritorna il prodotto aggiornato
         return prodottoRepository.save(prodotto);
     }
 
