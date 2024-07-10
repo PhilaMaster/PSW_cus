@@ -22,6 +22,13 @@ public interface ProdottoRepository extends JpaRepository<Prodotto,Integer> {
 
     List<Prodotto> findBySesso(Prodotto.Sesso sesso);
 
+    @Query("SELECT p FROM Prodotto p WHERE " +
+            "(p.nome LIKE %:nome% OR :nome IS NULL) AND " +
+            "(p.prezzo = COALESCE(:prezzo, p.prezzo)) AND " +
+            "(p.categoria = COALESCE(:categoria, p.categoria)) AND " +
+            "(p.sesso = COALESCE(:sesso, p.sesso))")
+    List<Prodotto> findByNomeAndPrezzoAndCategoriaAndSesso(String nome, double prezzo, String categoria, Prodotto.Sesso sesso);
+
     Prodotto findById(int id);
 
 }

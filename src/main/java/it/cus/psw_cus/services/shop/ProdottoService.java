@@ -37,6 +37,11 @@ public class ProdottoService {
     }
 
     @Transactional
+    public List<Prodotto> findByNomeAndPrezzoAndCategoriaAndSesso(String nome, double prezzo, String categoria, Prodotto.Sesso sesso){
+        return prodottoRepository.findByNomeAndPrezzoAndCategoriaAndSesso(nome,prezzo,categoria,sesso);
+    }
+
+    @Transactional
     public List<Prodotto> findByNome(String nome) {
         return prodottoRepository.findByNome(nome);
     }

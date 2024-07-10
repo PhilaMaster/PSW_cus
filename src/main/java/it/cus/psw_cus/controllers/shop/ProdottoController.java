@@ -39,7 +39,7 @@ public class ProdottoController {
             prodottoService.deleteProdotto(id);
             return new ResponseEntity<>(new ResponseMessage("Prodotto eliminato"), HttpStatus.OK);
         } catch (ProdottoNotFoundException e) {
-            return new ResponseEntity<>(new ResponseMessage("Product non trovato"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ResponseMessage("Prodotto non trovato"), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -49,8 +49,14 @@ public class ProdottoController {
             Prodotto prodotto = prodottoService.findById(id);
             return new ResponseEntity<>(prodotto, HttpStatus.OK);
         } catch (ProdottoNotFoundException e) {
-            return new ResponseEntity<>(new ResponseMessage("Product non trovato"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ResponseMessage("Prodotto non trovato"), HttpStatus.NOT_FOUND);
         }
+    }
+
+    @GetMapping("/{nome},{categoria},{sesso},{prezzo}")
+    public ResponseEntity<?> findByNomeAndPrezzoAndCategoriaAndSesso(String nome,double prezzo, String categoria, Prodotto.Sesso sesso){
+            List<Prodotto> prodotti = prodottoService.findByNomeAndPrezzoAndCategoriaAndSesso(nome,prezzo,categoria,sesso);
+            return new ResponseEntity<>(prodotti, HttpStatus.OK);
     }
 
     @GetMapping("/{nome}")

@@ -89,6 +89,40 @@ class ProdottoService {
     }
   }
 
+  Future<List<Prodotto>> getProdottiByNomeAndPrezzoAndCategoriaAndSesso({
+    required String nome,
+    double? prezzo,
+    String? categoria,
+    String? sesso,
+  }) async {
+    String url = '$baseUrl/search';
+    Map<String, dynamic> queryParams = {
+      'nome': nome,
+    };
+
+    if (prezzo != null) {
+      queryParams['prezzo'] = prezzo.toString();
+    }
+    if (categoria != null) {
+      queryParams['categoria'] = categoria;
+    }
+    if (sesso != null) {
+      queryParams['sesso'] = sesso;
+    }
+
+    String queryString = Uri(queryParameters: queryParams).query;
+    url += '?' + queryString;
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body);
+      return jsonResponse.map((prodotto) => Prodotto.fromJson(prodotto)).toList();
+    } else {
+      throw Exception('Impossibile ottenere i prodotti');
+    }
+  }
+
   Future<Prodotto> createProdotto(Prodotto prodotto) async {
     final response = await http.post(
       Uri.parse(baseUrl),
