@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/UI/widgets/ingressi_widget.dart';
 import 'package:frontend/UI/widgets/app_bar.dart';
+import 'package:frontend/model/objects/authenticator.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 import '../../model/objects/prenotazioni/prenotazione.dart';
 import '../../model/objects/prenotazioni/sala.dart';
@@ -15,20 +17,39 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late Future<List<Prenotazione>> futurePrenotazioni;
-  Utente utenteLoggato = Utente(id:1,nome:"Pasquale",cognome: "Papalia",sesso:Sesso.MASCHIO);//esempio finchè non facciamo il login
+  Utente user = Utente(id:-1,nome:"guest",cognome: "guest",sesso:Sesso.MASCHIO);//esempio finchè non facciamo il login
   bool mostraPrenotazioniPassate = false;
+  // String username = "guest";
 
   @override
   void initState() {
     super.initState();
-    futurePrenotazioni = PrenotazioneService.getPrenotazioniFutureUtente(utenteLoggato.id);
+
+
+    // String? token = Authenticator.sharedInstance.getToken();
+    // if(token!=null){
+    //   Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+    //   username = decodedToken['given_name'];
+    // }
+    // else{
+    //   username = "guest";
+    // }
+    // print("loggato con token $token");
+
+    if(isLoggedIn){
+      // Authenticator auth = Authenticator();
+      // int id = JwtDecoder.decode(auth.getToken()!)['id'];
+      // user = await UtenteService.getUtente(id);
+      user = utenteLoggato!;
+    }
+    futurePrenotazioni = PrenotazioneService.getPrenotazioniFutureUtente(user.id);
   }
   void togglePrenotazioni() {
     setState(() {
       mostraPrenotazioniPassate = !mostraPrenotazioniPassate;
       futurePrenotazioni = !mostraPrenotazioniPassate
-          ? PrenotazioneService.getPrenotazioniFutureUtente(utenteLoggato.id) // Sostituisci 1 con l'ID dell'utente reale
-          : PrenotazioneService.getPrenotazioniUtente(utenteLoggato.id);
+          ? PrenotazioneService.getPrenotazioniFutureUtente(user.id)
+          : PrenotazioneService.getPrenotazioniUtente(user.id);
     });
   }
 
@@ -42,21 +63,29 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Benvenuto, ${utenteLoggato.nome}!',
+              'Benvenuto, ${user.nome}!',
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            FutureBuilder(future: UtenteService.getIngressi(utenteLoggato.id),
+            FutureBuilder(future: UtenteService.getIngressi(user.id),
                 builder: (context,snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator(); // Mostra un indicatore di progresso durante il caricamento
+                    return const CircularProgressIndicator();
                   } else if (snapshot.hasError) {
-                    return Text('C\'è stato un errore nel caricamento degli ingressi: ${snapshot.error} (solo per debug)'); // Gestisce eventuali errori
+                    String errorMessage;
+                    if (user.id == -1){
+                      errorMessage = "Effettua il login per visualizzare il numero di ingressi rimanenti!";
+                    }else if(snapshot.error.toString().contains('Utente non trovato')) {
+                      errorMessage = 'Utente non trovato';
+                    } else {
+                      errorMessage = 'C\'è stato un errore nel caricamento degli ingressi';
+                    }
+                    return Text(errorMessage);
                   } else if (snapshot.hasData) {
                     final int ingressi = snapshot.data!;
                     return Ingressiwidget(ingressi);
                   } else {
-                    return const SizedBox(height: 16); // Gestisce il caso in cui non ci siano dati
+                    return const SizedBox(height: 16); //gestisce il caso in cui non ci siano dati
                   }
                 }
             ),
@@ -74,7 +103,15 @@ class _HomePageState extends State<HomePage> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
-                  return Center(child: Text('Errore nel caricamento delle prenotazioni. ${snapshot.error}'));//TODO debug
+                  String errorMessage;
+                  if (user.id == -1){
+                    errorMessage = "Effettua il login per visualizzare le prenotazioni!";
+                  }else if(snapshot.error.toString().contains('Utente non trovato')) {
+                    errorMessage = 'Utente non trovato';
+                  } else {
+                    errorMessage = 'Errore nel caricamento delle prenotazioni.';
+                  }
+                  return Center(child: Text(errorMessage));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return const Center(child: Text('Nessuna prenotazione trovata.'));
                 } else {

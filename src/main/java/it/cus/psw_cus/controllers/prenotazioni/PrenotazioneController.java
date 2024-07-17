@@ -2,12 +2,15 @@ package it.cus.psw_cus.controllers.prenotazioni;
 
 import it.cus.psw_cus.entities.Prenotazione;
 import it.cus.psw_cus.services.prenotazioni.PrenotazioneService;
+import it.cus.psw_cus.support.authentication.Utils;
 import it.cus.psw_cus.support.exceptions.SalaFullException;
 import it.cus.psw_cus.support.exceptions.SalaNotFoundException;
+import it.cus.psw_cus.support.exceptions.UnauthorizedAccessException;
 import it.cus.psw_cus.support.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -23,6 +26,7 @@ public class PrenotazioneController {
         this.prenotazioneService = prenotazioneService;
     }
 
+    @PreAuthorize("hasRole('utente')")
     @PostMapping
     public ResponseEntity<?> create(@RequestBody @Valid Prenotazione prenotazione) {
         try{
@@ -36,26 +40,33 @@ public class PrenotazioneController {
         }
     }
 
+    @PreAuthorize("hasRole('admin')")
     @GetMapping
     public List<Prenotazione> getAll() {
         return prenotazioneService.findAll();
     }
 
+    @PreAuthorize("hasRole('utente')")
     @GetMapping("/utente/future/{idUtente}")
-    public List<Prenotazione> getFutureUtente(@PathVariable int idUtente){
+    public ResponseEntity<?> getFutureUtente(@PathVariable int idUtente){
         try{
-            return prenotazioneService.getPrenotazioniUtenteFuture(idUtente);
+            return new ResponseEntity<>(prenotazioneService.getPrenotazioniUtenteFuture(idUtente),HttpStatus.OK);
         } catch (UserNotFoundException e) {
-            throw new RuntimeException("Utente non trovato");//l'utente è loggato, dovrebbe non entrare mai nel catch poichè esiste sicuramente
+            return new ResponseEntity<>("Utente non trovato",HttpStatus.NOT_FOUND);
+        } catch (UnauthorizedAccessException e) {
+            return new ResponseEntity<>("Accesso non autorizzato", HttpStatus.UNAUTHORIZED);
         }
     }
 
+    @PreAuthorize("hasRole('utente')")
     @GetMapping("/utente/{idUtente}")
-    public List<Prenotazione> getAllUtente(@PathVariable int idUtente){
+    public ResponseEntity<?> getAllUtente(@PathVariable int idUtente){
         try{
-            return prenotazioneService.getPrenotazioniUtente(idUtente);
+            return new ResponseEntity<>(prenotazioneService.getPrenotazioniUtente(idUtente),HttpStatus.OK);
         } catch (UserNotFoundException e) {
-            throw new RuntimeException("Utente non trovato");//l'utente è loggato, dovrebbe non entrare mai nel catch poichè esiste sicuramente
+            return new ResponseEntity<>("Utente non trovato",HttpStatus.NOT_FOUND);
+        }catch (UnauthorizedAccessException e) {
+            return new ResponseEntity<>("Accesso non autorizzato", HttpStatus.UNAUTHORIZED);
         }
     }
 }

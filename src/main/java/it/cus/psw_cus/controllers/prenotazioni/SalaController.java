@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.text.DateFormat;
 
@@ -33,16 +34,18 @@ public class    SalaController {
         this.prenotazioneService = prenotazioneService;
     }
 
+    @PreAuthorize("hasRole('admin')")
     @PostMapping
     public ResponseEntity<?> create(@RequestBody @Valid Sala sala) {
         try{
             Sala ret = salaService.createSala(sala);
             return new ResponseEntity<>(ret, HttpStatus.CREATED);
         } catch (SalaAlreadyExistsException e) {
-            return new ResponseEntity<>("Sala già esistente", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("La sala già esiste", HttpStatus.BAD_REQUEST);
         }
     }
 
+    @PreAuthorize("hasRole('admin')")
     @PutMapping
     public ResponseEntity<String> update(@RequestBody @Valid Sala sala) throws SalaNotFoundException {
         salaService.updateSala(sala.getId(),sala);
@@ -64,6 +67,7 @@ public class    SalaController {
         return new ResponseEntity<>(salaService.getSalaById(id), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('admin')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable int id) throws SalaNotFoundException {
         salaService.deleteSala(id);
@@ -74,10 +78,11 @@ public class    SalaController {
 //    @GetMapping("/{id}/disponibile")
 //    public ResponseEntity<Boolean> isDisponibile(@PathVariable int id,
 //                 @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date data,
-//                 @RequestParam("fascia_oraria") Prenotazione.FasciaOraria fasciaOraria) throws SalaNotFoundException {//TODO forse qui va @enumeration
+//                 @RequestParam("fascia_oraria") Prenotazione.FasciaOraria fasciaOraria) throws SalaNotFoundException {// forse qui va @enumeration
 //        return new ResponseEntity<>(salaService.isDisponibile(id,data,fasciaOraria), HttpStatus.OK);
 //    }
 
+    @PreAuthorize("hasRole('utente')")
     @GetMapping("/{id}/postiOccupati")
     public ResponseEntity<Integer> getPostiOccupati(@PathVariable int id,
                                                     @RequestParam Prenotazione.FasciaOraria fasciaOraria,

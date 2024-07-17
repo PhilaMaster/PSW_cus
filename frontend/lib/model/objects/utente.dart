@@ -4,6 +4,8 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import 'authenticator.dart';
+
 
 class Utente{
   final int id;
@@ -55,13 +57,26 @@ class UtenteService{
   static const String _baseUrl = 'http://localhost:8080/api/utenti';
 
   static Future<int> getIngressi(int id) async{
-    final response = await http.get(Uri.parse('$_baseUrl/$id/ingressi'));
+    final response = await http.get(Uri.parse('$_baseUrl/$id/ingressi'),headers: {'Authorization': 'Bearer ${Authenticator().getToken()}'});
 
     if (response.statusCode == 200) {
       return int.parse(response.body);
-    } else {
+    } else if (response.statusCode == 404) {
+      throw Exception('Utente non trovato');
+    }else {
       throw Exception('Impossibile richiedere num ingressi rimanenti');
     }
   }
 
+  static Future<Utente> getUtente(int id) async{
+    final response = await http.get(Uri.parse('$_baseUrl/$id'),headers: {'Authorization': 'Bearer ${Authenticator().getToken()}'});
+
+    if (response.statusCode == 200) {
+      return Utente.fromJson(json.decode(response.body));
+    } else if (response.statusCode == 404) {
+      throw Exception('Utente non trovato');
+    } else {
+      throw Exception('Errore nel caricamento dell\'utente');
+    }
+  }
 }

@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:frontend/model/objects/prenotazioni/sala.dart';
 
+import '../authenticator.dart';
 import '../utente.dart';
 import 'package:http/http.dart' as http;
 
@@ -128,7 +129,7 @@ class PrenotazioneService {
   }
 
   static Future<List<Prenotazione>> getPrenotazioniFutureUtente(int idUtente) async {
-    final response = await http.get(Uri.parse('$baseUrl/utente/future/$idUtente'));
+    final response = await http.get(Uri.parse('$baseUrl/utente/future/$idUtente'), headers: {'Authorization': 'Bearer ${Authenticator().getToken()}'});
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((prenotazione) => Prenotazione.fromJson(prenotazione)).toList();
@@ -138,7 +139,7 @@ class PrenotazioneService {
   }
 
   static Future<List<Prenotazione>> getPrenotazioniUtente(int idUtente) async {
-    final response = await http.get(Uri.parse('$baseUrl/utente/$idUtente'));
+    final response = await http.get(Uri.parse('$baseUrl/utente/$idUtente'), headers: {'Authorization': 'Bearer ${Authenticator().getToken()}'});
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((prenotazione) => Prenotazione.fromJson(prenotazione)).toList();

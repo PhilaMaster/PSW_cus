@@ -7,6 +7,7 @@ import it.cus.psw_cus.support.exceptions.PackageNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,7 @@ public class PacchettoController {
         this.pacchettoService = pacchettoService;
     }
 
+    @PreAuthorize("hasRole('admin')")
     @PostMapping
     public ResponseEntity<?> create(@RequestBody @Valid Pacchetto pacchetto) {
         try {
@@ -33,11 +35,13 @@ public class PacchettoController {
         }
     }
 
+    @PreAuthorize("hasRole('admin')")
     @PutMapping
     public ResponseEntity<String> update(@RequestBody @Valid Pacchetto pacchetto) throws PackageNotFoundException {
         pacchettoService.updatePacchetto(pacchetto.getIngressi(),pacchetto);
         return new ResponseEntity<>("Pacchetto aggiornato con successo", HttpStatus.OK);
     }
+
 
     @GetMapping
     public ResponseEntity<List<Pacchetto>> getAll() {
@@ -67,6 +71,7 @@ public class PacchettoController {
         return ResponseEntity.badRequest().body("Parametro richiesto non fornito");
     }
 
+    @PreAuthorize("hasRole('admin')")
     @DeleteMapping("/{ingressi}")
     public ResponseEntity<String> delete(@PathVariable int ingressi) throws PackageNotFoundException {
         pacchettoService.deletePacchetto(ingressi);

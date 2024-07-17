@@ -1,3 +1,5 @@
+import 'package:frontend/model/objects/authenticator.dart';
+
 import '../utente.dart';
 import 'pacchetto.dart';
 
@@ -96,27 +98,31 @@ class AbbonamentoService {
   }
 
   Future<List<Abbonamento>> getAbbonamentiByUtente(int utenteId) async {
-    final response = await http.get(Uri.parse('$_baseUrl/utente/$utenteId'));
+    final response = await http.get(Uri.parse('$_baseUrl/utente/$utenteId'), headers: {'Authorization': 'Bearer ${Authenticator().getToken()}'});
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((abbonamento) => Abbonamento.fromJson(abbonamento)).toList();
+    }else if (response.statusCode == 401){
+      throw Exception('Utente non loggato!');
     }else if (response.statusCode == 404){
-      throw Exception('Non trovato');
+      throw Exception('404 - Non trovato');
     }
     else {
-      throw Exception('Impossibile caricare gli abbonamenti per l\'utente con id:$utenteId');
+      throw Exception('Impossibile caricare gli abbonamenti per l\'utente con id:$utenteId (Errore per debug:${response.statusCode})');
     }
   }
 
   Future<List<Abbonamento>> getAbbonamentiByUtenteWithPositiveRimanenti(int utenteId) async {
-    final response = await http.get(Uri.parse('$_baseUrl/utente/$utenteId/coningressi'));
+    final response = await http.get(Uri.parse('$_baseUrl/utente/$utenteId/coningressi'), headers: {'Authorization': 'Bearer ${Authenticator().getToken()}'});
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((abbonamento) => Abbonamento.fromJson(abbonamento)).toList();
+    }else if (response.statusCode == 401){
+      throw Exception('Utente non loggato!');
     }else if (response.statusCode == 404){
       throw Exception('Non trovato');
     } else {
-      throw Exception('Impossibile caricare gli abbonamenti con ingressi per l\'utente con id:$utenteId');
+      throw Exception('Impossibile caricare gli abbonamenti con ingressi per l\'utente con id:$utenteId (Errore per debug:${response.statusCode})');
     }
   }
 }

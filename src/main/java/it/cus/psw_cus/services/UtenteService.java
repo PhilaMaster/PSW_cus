@@ -3,6 +3,8 @@ package it.cus.psw_cus.services;
 import it.cus.psw_cus.entities.Utente;
 import it.cus.psw_cus.repositories.UtenteRepository;
 import it.cus.psw_cus.repositories.prenotazioni.AbbonamentoRepository;
+import it.cus.psw_cus.support.authentication.Utils;
+import it.cus.psw_cus.support.exceptions.UnauthorizedAccessException;
 import it.cus.psw_cus.support.exceptions.UserAlreadyExistsException;
 import it.cus.psw_cus.support.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,12 +37,12 @@ public class UtenteService {
         return userRepository.save(utente);
     }
 
-    public void eliminaUtente(int id) throws UserNotFoundException {
+    public void eliminaUtente(int id) throws UserNotFoundException, UnauthorizedAccessException {
         Utente utente = cercaUtente(id);
         userRepository.delete(utente);
     }
 
-    public int ingressiUtente(int id) throws UserNotFoundException {
+    public int ingressiUtente(int id) throws UserNotFoundException, UnauthorizedAccessException {
         return abbonamentoRepository.contaIngressiRimanentiUtente(cercaUtente(id));
     }
 

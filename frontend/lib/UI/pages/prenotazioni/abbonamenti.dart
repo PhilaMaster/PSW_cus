@@ -43,7 +43,7 @@ class _AbbonamentiState extends State<Abbonamenti> {
                 'Pacchetti disponibili:',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
               ),
-            Expanded(//TODO aggiungere scrollbar
+            Expanded(
               child: FutureBuilder<List<Pacchetto>>(
                 future: futurePacchetti,
                 builder: (context, snapshot) {
@@ -87,14 +87,14 @@ class _AbbonamentiState extends State<Abbonamenti> {
               'Abbonamenti sottoscritti:',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
-            Expanded(//TODO aggiungere scrollbar
+            Expanded(
               child: FutureBuilder<List<Abbonamento>>(
                 future: futureAbbonamenti,
                 builder: (context,snapshot){
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Errore nel caricamento degli abbonamenti ${snapshot.error} (debug)'));//TODO debug
+                    return Center(child: Text('Errore nel caricamento degli abbonamenti: ${snapshot.error}'));//TODO debug
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return const Center(child: Text('Non hai sottoscritto alcun abbonamento'));
                   } else {

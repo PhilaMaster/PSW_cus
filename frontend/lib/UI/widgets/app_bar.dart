@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../model/objects/authenticator.dart';
+
+
+
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   const MyAppBar({super.key});
 
@@ -39,6 +43,21 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
           },
           icon: const Icon(Icons.shopping_cart, color: Colors.white),
         ),
+        if (isLoggedIn)
+          TextButton(
+            onPressed: () {
+              Authenticator().logOut();
+              Navigator.pushNamedAndRemoveUntil(context, '/login', (Route<dynamic> route) => false);
+            },
+            child: const Text('Logout', style: TextStyle(color: Colors.white)),
+          )
+        else
+          TextButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/login');
+            },
+            child: const Text('Login', style: TextStyle(color: Colors.white)),
+          ),
       ],
     );
   }

@@ -47,7 +47,7 @@ public class Utente {
     @JsonIgnore
     private Cart cart;
 
-    @OneToMany(mappedBy = "utente", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "utente", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<Ordine> ordini = new HashSet<>();
 
     public enum Sesso{

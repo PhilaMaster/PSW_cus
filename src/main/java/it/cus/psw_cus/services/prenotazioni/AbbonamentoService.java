@@ -3,12 +3,16 @@ package it.cus.psw_cus.services.prenotazioni;
 import it.cus.psw_cus.entities.Abbonamento;
 import it.cus.psw_cus.entities.Utente;
 import it.cus.psw_cus.repositories.prenotazioni.AbbonamentoRepository;
+import it.cus.psw_cus.support.authentication.Utils;
+import it.cus.psw_cus.support.exceptions.AbbonamentoMalformatoException;
 import it.cus.psw_cus.support.exceptions.AbbonamentoNotFoundException;
+import it.cus.psw_cus.support.exceptions.UnauthorizedAccessException;
 import it.cus.psw_cus.support.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,7 +37,9 @@ public class AbbonamentoService {
     }
 
     @Transactional
-    public Abbonamento createAbbonamento(Abbonamento abbonamento) {
+    public Abbonamento createAbbonamento(Abbonamento abbonamento) throws AbbonamentoMalformatoException, UnauthorizedAccessException {
+        if(abbonamento.getRimanenti() != abbonamento.getPacchetto().getIngressi()) throw new AbbonamentoMalformatoException();
+        if(abbonamento.getUtente().getId() != Utils.getId()) throw new UnauthorizedAccessException();
         return abbonamentoRepository.save(abbonamento);
     }
 
@@ -43,12 +49,14 @@ public class AbbonamentoService {
     }
 
     @Transactional(readOnly = true)
-    public List<Abbonamento> getAbbonamentiByUtente(Utente utente) {
+    public List<Abbonamento> getAbbonamentiByUtente(Utente utente) throws UnauthorizedAccessException {
+        if(utente.getId()!=Utils.getId()) throw new UnauthorizedAccessException();
         return abbonamentoRepository.findByUtente(utente);
     }
 
     @Transactional(readOnly = true)
-    public List<Abbonamento> getAbbonamentiUtenteConIngressi(Utente utente) {
+    public List<Abbonamento> getAbbonamentiUtenteConIngressi(Utente utente) throws UnauthorizedAccessException {
+        if(utente.getId()!=Utils.getId()) throw new UnauthorizedAccessException();
         return abbonamentoRepository.findByUtenteAndRimanentiGreaterThanZero(utente);
     }
 
