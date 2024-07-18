@@ -27,9 +27,9 @@ class Pacchetto{
 }
 
 class PacchettoService {
-  final String baseUrl = 'http://localhost:8080/api/pacchetti';
+  static const String baseUrl = 'http://localhost:8080/api/pacchetti';
 
-  Future<List<Pacchetto>> getAllPacchetti() async {
+  static Future<List<Pacchetto>> getAllPacchetti() async {
     final response = await http.get(Uri.parse(baseUrl));
 
     if (response.statusCode == 200) {
@@ -40,7 +40,7 @@ class PacchettoService {
     }
   }
 
-  Future<Pacchetto> getPacchettoByIngressi(int ingressi) async {
+  static Future<Pacchetto> getPacchettoByIngressi(int ingressi) async {
     final response = await http.get(Uri.parse('$baseUrl/$ingressi'));
 
     if (response.statusCode == 200) {
@@ -52,7 +52,7 @@ class PacchettoService {
     }
   }
 
-  Future<List<Pacchetto>> getPacchettiByPriceRange(double min, double max) async {
+  static Future<List<Pacchetto>> getPacchettiByPriceRange(double min, double max) async {
     final response = await http.get(Uri.parse('$baseUrl/priceSearch?min=$min&max=$max'));
 
     if (response.statusCode == 200) {
@@ -63,7 +63,7 @@ class PacchettoService {
     }
   }
 
-  Future<Pacchetto> createPacchetto(Pacchetto pacchetto) async {
+  static Future<Pacchetto> createPacchetto(Pacchetto pacchetto) async {
     final response = await http.post(
       Uri.parse(baseUrl),
       headers: <String, String>{
@@ -81,7 +81,7 @@ class PacchettoService {
     }
   }
 
-  Future<void> updatePacchetto(int ingressi, Pacchetto p) async {
+  static Future<void> updatePacchetto(int ingressi, Pacchetto p) async {
     final response = await http.put(
       Uri.parse('$baseUrl/$ingressi'),
       headers: <String, String>{
@@ -97,7 +97,7 @@ class PacchettoService {
     }
   }
 
-  Future<void> deletePacchetto(int id) async {
+  static Future<void> deletePacchetto(int id) async {
     final response = await http.delete(Uri.parse('$baseUrl/$id'));
 
     if (response.statusCode == 404) {

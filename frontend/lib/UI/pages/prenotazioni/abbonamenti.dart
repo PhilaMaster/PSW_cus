@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/UI/pages/home.dart';
 import 'package:frontend/model/objects/prenotazioni/abbonamento.dart';
 import 'package:frontend/model/objects/prenotazioni/pacchetto.dart';
 
@@ -19,8 +20,8 @@ class _AbbonamentiState extends State<Abbonamenti> {
   @override
   void initState() {
     super.initState();
-    futurePacchetti = PacchettoService().getAllPacchetti();
-    futureAbbonamenti = AbbonamentoService().getAbbonamentiByUtenteWithPositiveRimanenti(utenteLoggato.id);
+    futurePacchetti = PacchettoService.getAllPacchetti();
+    futureAbbonamenti = AbbonamentoService.getAbbonamentiByUtenteWithPositiveRimanenti(utenteLoggato.id);
   }
   @override
   Widget build(BuildContext context) {
@@ -69,9 +70,23 @@ class _AbbonamentiState extends State<Abbonamenti> {
                             ],
                           ),
                           trailing: ElevatedButton(
-                            onPressed: () {
-                              // Logica per acquistare il pacchetto
-                            },
+                            onPressed: () async {
+                              try {
+                                Abbonamento abb = Abbonamento(
+                                  id: -1,
+                                  rimanenti: pacchetto.ingressi,
+                                  pacchetto: pacchetto,
+                                  utente: utenteLoggato,
+                                  dataAcquisto: DateTime.now(),
+                                );
+                                Abbonamento created = await AbbonamentoService.createAbbonamento(abb);
+                                if (created.id != -1) {
+                                  _showConfirmationDialog(context);
+                                  // widget.updateIngressi();
+                                }
+                              } catch (error) {
+                                _showErrorDialog(context, error.toString());
+                              }},
                             child: const Text('Acquista'),
                           ),
                         );
@@ -127,137 +142,49 @@ class _AbbonamentiState extends State<Abbonamenti> {
     );
   }
 
-  // @override
-  // Widget build(BuildContext context){
-  //   return Scaffold(
-  //     body:Padding(
-  //       padding: const EdgeInsets.all(16.0),
-  //       child:Column(
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         children: [
-  //           Text(
-  //             '${utenteLoggato.nome}, in questa pagina puoi trovare i pacchetti disponibili e gli abbonamenti che hai sottoscritto',
-  //             style: const TextStyle(fontSize: 24),
-  //           ),
-  //           const SizedBox(height: 16),
-  //           const Text(
-  //             'Pacchetti disponibili:',
-  //             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-  //           ),
-  //           FutureBuilder<List<Pacchetto>>(
-  //             future: futurePackages,
-  //             builder: (context, snapshot) {
-  //               if (snapshot.connectionState == ConnectionState.waiting) {
-  //                 return const CircularProgressIndicator();
-  //               } else if (snapshot.hasError) {
-  //                 return Text('Errore: ${snapshot.error}');
-  //               } else if (snapshot.hasData) {
-  //                 return SizedBox(
-  //                     height: 600,
-  //                     width: MediaQuery.of(context).size.width,//allarga quanto lo schermo
-  //                     child:
-  //                     Expanded(
-  //                         child: SingleChildScrollView(
-  //                             scrollDirection: Axis.vertical,
-  //                             child:
-  //                             DataTable(
-  //                               columns: const [
-  //                                 DataColumn(label: Text('Numero ingressi')),
-  //                                 DataColumn(label: Text('Prezzo unitario')),
-  //                                 DataColumn(label: Text('Prezzo complessivo')),
-  //                                 // DataColumn(label: Text('Acquista')),
-  //                               ],
-  //                               rows: snapshot.data!.map((pacchetto) {
-  //                                 return DataRow(cells: [
-  //                                   DataCell(Text(pacchetto.ingressi.toString())),
-  //                                   DataCell(Text(pacchetto.prezzoUnitario.toString())),
-  //                                   DataCell(Text((pacchetto.prezzoUnitario*pacchetto.ingressi).toString())),
-  //                                   // DataCell(MaterialButton(onPressed: () {  },))
-  //                                 ]);
-  //                               }).toList(),
-  //                             )
-  //
-  //                         )
-  //                     )
-  //                 );
-  //               } else {
-  //                 return const Text('Nessun pacchetto disponibile');
-  //               }
-  //             },
-  //           ),
-  //         ],
-  //       )
-  //     )
-  //   );
-  // }
+  void _showConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Acquisto confermato'),
+          content: const Text('Il tuo acquisto è stato completato con successo!'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  //aggiorno gli abbonamenti visualizzati nella pagina stessa
+                  futureAbbonamenti = AbbonamentoService.getAbbonamentiByUtenteWithPositiveRimanenti(utenteLoggato.id);
+                  //aggiorno le prenotazioni nella home (nel caso si tornasse indietro dal browser)
+                  // futureIngressi = UtenteService.getIngressi(utenteLoggato.id);
+                });
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     // appBar: MyAppBar(),
-  //     body: Center(
-  //       child: FutureBuilder<List<Pacchetto>>(
-  //         future: futurePackages,
-  //         builder: (context, snapshot) {
-  //           if (snapshot.connectionState == ConnectionState.waiting) {
-  //             return CircularProgressIndicator();
-  //           } else if (snapshot.hasError) {
-  //             return Text('Errore: ${snapshot.error}');
-  //           } else if (snapshot.hasData) {
-  //             return ListView.builder(
-  //               itemCount: snapshot.data!.length,
-  //               itemBuilder: (context, index) {
-  //                 final p = snapshot.data![index];
-  //                 return ListTile(
-  //                   title: Text('Ingressi: ${p.ingressi}'),
-  //                   subtitle: Text('Prezzo per ingresso: ${p.prezzoUnitario} €'),
-  //                 );
-  //               },
-  //             );
-  //           } else {
-  //             return Text('Nessun pacchetto disponibile');
-  //           }
-  //         },
-  //       ),
-  //     ),
-  //   );
-  // }
+  void _showErrorDialog(BuildContext context, String errorMessage) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Errore'),
+          content: Text('Si è verificato un errore: $errorMessage'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
-
-// class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return AppBar(
-//       title: Text('Palestra Web'),
-//       actions: <Widget>[
-//         TextButton(
-//           onPressed: () {
-//             Navigator.pushNamed(context, '/home');
-//           },
-//           child: Text('Home', style: TextStyle(color: Colors.white)),
-//         ),
-//         TextButton(
-//           onPressed: () {
-//             Navigator.pushNamed(context, '/abbonamenti');
-//           },
-//           child: Text('Abbonamenti', style: TextStyle(color: Colors.white)),
-//         ),
-//         TextButton(
-//           onPressed: () {
-//             Navigator.pushNamed(context, '/prenota');
-//           },
-//           child: Text('Prenota', style: TextStyle(color: Colors.white)),
-//         ),
-//         TextButton(
-//           onPressed: () {
-//             Navigator.pushNamed(context, '/shop');
-//           },
-//           child: Text('Shop', style: TextStyle(color: Colors.white)),
-//         ),
-//       ],
-//     );
-//   }
-//
-//   @override
-//   Size get preferredSize => Size.fromHeight(kToolbarHeight);
-// }

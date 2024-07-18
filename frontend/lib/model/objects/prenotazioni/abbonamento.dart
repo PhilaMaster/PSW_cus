@@ -29,7 +29,7 @@ class Abbonamento{
     'rimanenti': rimanenti,
     'pacchetto':pacchetto.toJson(),
     'utente':utente.toJson(),
-    'dataAcquisto': dataAcquisto.toIso8601String().split(" ")[0],//TODO testare se funziona. Prendo la prima parte, ovvero solo data senza ora
+    'dataAcquisto': dataAcquisto.toIso8601String().split(" ")[0],//TODO testare se funziona. Prendo la prima parte, ovvero solo data senza ora. Nello split va la T?
   };
 
   @override
@@ -55,7 +55,7 @@ class AbbonamentoService {
     }
   }
 
-  Future<Abbonamento> getAbbonamentoById(int id) async {
+  static Future<Abbonamento> getAbbonamentoById(int id) async {
     final response = await http.get(Uri.parse('$_baseUrl/$id'));
     if (response.statusCode == 200) {
       return Abbonamento.fromJson(json.decode(response.body));
@@ -64,40 +64,27 @@ class AbbonamentoService {
     }
   }
 
-  Future<Abbonamento> createAbbonamento(Abbonamento abbonamento) async {
+  static Future<Abbonamento> createAbbonamento(Abbonamento abbonamento) async {
     final response = await http.post(
-      Uri.parse('$_baseUrl/api/abbonamenti'),
-      headers: {'Content-Type': 'application/json'},
+      Uri.parse(_baseUrl),
+      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ${Authenticator().getToken()}'},
       body: json.encode(abbonamento.toJson()),
     );
     if (response.statusCode == 201) {
       return Abbonamento.fromJson(json.decode(response.body));
     } else {
-      throw Exception('Impossibile creare l\'abbonamento');
+      throw Exception('Impossibile creare l\'abbonamento ${response.body}');
     }
   }
 
-  // Future<Abbonamento> updateAbbonamento(int id, Abbonamento abbonamento) async {
-  //   final response = await http.put(
-  //     Uri.parse('$_baseUrl/$id'),
-  //     headers: {'Content-Type': 'application/json'},
-  //     body: json.encode(abbonamento.toJson()),
-  //   );
-  //   if (response.statusCode == 200) {
-  //     return Abbonamento.fromJson(json.decode(response.body));
-  //   } else {
-  //     throw Exception('Failed to update abbonamento');
-  //   }
-  // }
-
-  Future<void> deleteAbbonamento(int id) async {
+  static Future<void> deleteAbbonamento(int id) async {
     final response = await http.delete(Uri.parse('$_baseUrl/$id'));
     if (response.statusCode != 204) {
       throw Exception('Impossibile eliminare l\'abbonamento');
     }
   }
 
-  Future<List<Abbonamento>> getAbbonamentiByUtente(int utenteId) async {
+  static Future<List<Abbonamento>> getAbbonamentiByUtente(int utenteId) async {
     final response = await http.get(Uri.parse('$_baseUrl/utente/$utenteId'), headers: {'Authorization': 'Bearer ${Authenticator().getToken()}'});
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
@@ -112,7 +99,7 @@ class AbbonamentoService {
     }
   }
 
-  Future<List<Abbonamento>> getAbbonamentiByUtenteWithPositiveRimanenti(int utenteId) async {
+  static Future<List<Abbonamento>> getAbbonamentiByUtenteWithPositiveRimanenti(int utenteId) async {
     final response = await http.get(Uri.parse('$_baseUrl/utente/$utenteId/coningressi'), headers: {'Authorization': 'Bearer ${Authenticator().getToken()}'});
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);

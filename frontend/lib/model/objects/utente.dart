@@ -27,7 +27,7 @@ class Utente{
     'id': id,
     'nome': nome,
     'cognome':cognome,
-    'sesso':sesso.toString()//TODO dovrebbe andare poichè le ho scritte in maiuscolo ma è comunque da testare
+    'sesso':sesso.toShortString()//TODO dovrebbe andare poichè le ho scritte in maiuscolo ma è comunque da testare
   };
 
   @override
@@ -50,6 +50,10 @@ extension SessoExtension on Sesso {
       default:
         throw Exception('Sesso non valido: $s');
     }
+  }
+
+  String toShortString() {
+    return toString().split('.').last;
   }
 }
 

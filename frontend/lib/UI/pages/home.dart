@@ -25,21 +25,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-
-    // String? token = Authenticator.sharedInstance.getToken();
-    // if(token!=null){
-    //   Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-    //   username = decodedToken['given_name'];
-    // }
-    // else{
-    //   username = "guest";
-    // }
-    // print("loggato con token $token");
-
     if(isLoggedIn){
-      // Authenticator auth = Authenticator();
-      // int id = JwtDecoder.decode(auth.getToken()!)['id'];
-      // user = await UtenteService.getUtente(id);
       user = utenteLoggato!;
     }
     futurePrenotazioni = PrenotazioneService.getPrenotazioniFutureUtente(user.id);
