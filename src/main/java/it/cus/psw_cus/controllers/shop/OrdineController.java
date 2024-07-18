@@ -67,7 +67,9 @@ public class OrdineController {
             } else {
                 return new ResponseEntity<>(new ResponseMessage("Ordine non trovato per l'utente"), HttpStatus.NOT_FOUND);
             }
-        } catch (UserNotFoundException e) {
+        } catch(UnauthorizedAccessException u){
+            return new ResponseEntity<>(new ResponseMessage("Utente non autorizzato"), HttpStatus.UNAUTHORIZED);
+        }catch (UserNotFoundException e) {
             return new ResponseEntity<>(new ResponseMessage("Utente non trovato"), HttpStatus.NOT_FOUND);
         }
     }

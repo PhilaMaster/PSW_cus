@@ -8,6 +8,7 @@ import it.cus.psw_cus.support.exceptions.ProdottoEsistenteException;
 import it.cus.psw_cus.support.exceptions.ProdottoNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -23,6 +24,7 @@ public class ProdottoController {
         this.prodottoService = prodottoService;
     }
 
+    @PreAuthorize("hasRole('admin')")
     @PostMapping
     public ResponseEntity<?> create(@RequestBody @Valid Prodotto prodotto) {
         try {
@@ -33,6 +35,7 @@ public class ProdottoController {
         }
     }
 
+    @PreAuthorize("hasRole('admin')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProdotto(@PathVariable int id) {
         try {
@@ -53,7 +56,7 @@ public class ProdottoController {
         }
     }
 
-    @GetMapping("/{nome},{categoria},{sesso},{prezzo}")
+    @GetMapping("/search")
     public ResponseEntity<?> findByNomeAndPrezzoAndCategoriaAndSesso(String nome,double prezzo, String categoria, Prodotto.Sesso sesso){
             List<Prodotto> prodotti = prodottoService.findByNomeAndPrezzoAndCategoriaAndSesso(nome,prezzo,categoria,sesso);
             return new ResponseEntity<>(prodotti, HttpStatus.OK);
@@ -71,6 +74,7 @@ public class ProdottoController {
         return new ResponseEntity<>(prodotti, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('admin')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateProdotto(@PathVariable int id, @RequestBody @Valid Prodotto prodottoDettagli) {
         try {
