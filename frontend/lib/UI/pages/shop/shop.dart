@@ -1,11 +1,85 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import '../../../model/objects/shop/prodotto.dart';
 import '../../widgets/app_bar.dart';
 
-class Shop extends StatelessWidget {
+class Shop extends StatefulWidget {
   const Shop({super.key});
 
-//Prendere con la query i prodotti e metterli in una lista poi visualizzarli con il future builder e il listview.builder
-  // se la barra di ricerca è vuota allora stampa tutti i prodotti. Vedere come salvare le immagini
+  @override
+  _ShopState createState() => _ShopState();
+}
+
+class _ShopState extends State<Shop> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchTerm = '';
+  String? _selectedCategory;
+  late Future<List<Prodotto>> _allProdottiFuture;
+  List<Prodotto> _displayedProdotti = [];
+  Map<int, int> _quantities = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _allProdottiFuture = ProdottoService().getAllProdotti();
+    _loadProdotti();
+  }
+
+  Future<void> _loadProdotti() async {
+    final allProdotti = await _allProdottiFuture;
+    setState(() {
+      _displayedProdotti = allProdotti;
+    });
+  }
+
+  void _search(String query) {
+    setState(() {
+      _searchTerm = query;
+      _filterProdotti();
+    });
+  }
+
+  void _filterProdotti() {
+    _allProdottiFuture.then((allProdotti) {
+      setState(() {
+        _displayedProdotti = allProdotti
+            .where((prodotto) =>
+        prodotto.nome.toLowerCase().contains(_searchTerm.toLowerCase()) &&
+            (_selectedCategory == null || prodotto.categoria == _selectedCategory))
+            .toList();
+      });
+    });
+  }
+
+  void _onCategoryChanged(String? newCategory) {
+    setState(() {
+      _selectedCategory = newCategory;
+      _filterProdotti();
+    });
+  }
+
+  void _resetCategory() {
+    setState(() {
+      _selectedCategory = null;
+      _filterProdotti();
+    });
+  }
+
+  void _increaseQuantity(int index) {
+    setState(() {
+      _quantities[index] = (_quantities[index] ?? 0) + 1;
+    });
+  }
+
+  void _decreaseQuantity(int index) {
+    setState(() {
+      _quantities[index] = (_quantities[index] ?? 0) - 1;
+      if ((_quantities[index] ?? 0) <= 0) {
+        _quantities.remove(index);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,65 +100,146 @@ class Shop extends StatelessWidget {
           const SizedBox(height: 20.0),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: TextField(
-              style: TextStyle(color: Colors.black),
-              decoration: InputDecoration(
-                hintText: 'Cerca...',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Dropdown per categoria
+                DropdownButton<String>(
+                  value: _selectedCategory,
+                  hint: const Text('Categoria'),
+                  items: <String>['Elettronica', 'Abbigliamento', 'Casa', 'Sport', 'Gioielli', 'Libri']
+                      .map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: _onCategoryChanged,
                 ),
-                filled: true,
-                fillColor: Colors.white,
-              ),
+                const SizedBox(width: 20.0),
+                // Barra di ricerca
+                SizedBox(
+                  width: 300.0, // Imposta una larghezza specifica per la barra di ricerca
+                  child: TextField(
+                    controller: _searchController,
+                    onChanged: _search,
+                    style: const TextStyle(color: Colors.black),
+                    decoration: const InputDecoration(
+                      hintText: 'Cerca...',
+                      prefixIcon: Icon(Icons.search),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                  ),
+                ),
+                if (_selectedCategory != null)
+                  TextButton(
+                    onPressed: _resetCategory,
+                    child: const Text('Tutti'),
+                  ),
+              ],
             ),
           ),
           const SizedBox(height: 20.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              SizedBox(
-                width: 120,
-                height: 60,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    shadowColor: Colors.white,
-                    padding: EdgeInsets.all(15),
+          FutureBuilder<List<Prodotto>>(
+            future: _allProdottiFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return const Text('Nessun prodotto trovato');
+              } else {
+                return Expanded(
+                  child: ListView.builder(
+                    itemCount: _displayedProdotti.length,
+                    itemBuilder: (context, index) {
+                      final prodotto = _displayedProdotti[index];
+                      return Card(
+                        margin: const EdgeInsets.all(10.0),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              FadeInImage.assetNetwork(
+                                placeholder: 'assets/placeholder.png',
+                                image: prodotto.immagine,
+                                imageErrorBuilder: (context, error, stackTrace) {
+                                  return Image.asset('assets/placeholder.png');
+                                },
+                              ),
+                              const SizedBox(width: 200,),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      prodotto.nome,
+                                      style: const TextStyle(
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(prodotto.categoria),
+                                    Text(prodotto.descrizione),
+                                    Text('\$${prodotto.prezzo.toString()}'),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 20,),
+                              Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(Icons.remove),
+                                        onPressed: () => _decreaseQuantity(index),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(4.0),
+                                        ),
+                                        child: Text(
+                                          '${_quantities[index] ?? 0}',
+                                          style: const TextStyle(fontSize: 16.0),
+                                        ),
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(Icons.add),
+                                        onPressed: () => _increaseQuantity(index),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 20,),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      // Implementa la logica per aggiungere al carrello
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.white, // Sfondo bianco
+                                      iconColor: Colors.black, // Testo nero
+                                    ),
+                                    child: const Text('Aggiungi al carrello'),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                  child: const Text('Prezzo'),
-                ),
-              ),
-              SizedBox(
-                width: 120,
-                height: 60,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    shadowColor: Colors.white,
-                    padding: EdgeInsets.all(15),
-                  ),
-                  child: const Text('Categoria'),
-                ),
-              ),
-              SizedBox(
-                width: 120, // Definisci la larghezza del pulsante
-                height: 60, // Definisci l'altezza del pulsante
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    shadowColor: Colors.white,
-                    padding: EdgeInsets.all(15),
-                  ),
-                  child: const Text('Sesso'),
-                ),
-              ),
-            ],
+                );
+              }
+            },
           ),
-          Row(
-
-          ),
-          // Add more content as needed
         ],
       ),
     );

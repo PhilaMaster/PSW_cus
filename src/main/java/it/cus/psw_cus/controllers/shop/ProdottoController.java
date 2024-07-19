@@ -62,6 +62,12 @@ public class ProdottoController {
             return new ResponseEntity<>(prodotti, HttpStatus.OK);
     }
 
+    @GetMapping
+    public ResponseEntity<List<Prodotto>> getAll(){
+        List<Prodotto> prodotti = prodottoService.findAll();
+        return new ResponseEntity<>(prodotti, HttpStatus.OK);
+    }
+
     @GetMapping("/{nome}")
     public ResponseEntity<List<Prodotto>> findByNome(@PathVariable String nome) {
         List<Prodotto> prodotti = prodottoService.findByNome(nome);

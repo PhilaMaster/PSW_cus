@@ -32,6 +32,11 @@ public class ProdottoService {
     }
 
     @Transactional
+    public List<Prodotto> findAll(){
+       return prodottoRepository.findAll();
+    }
+
+    @Transactional
     public Prodotto findById(int id) throws ProdottoNotFoundException{
         return prodottoRepository.findById(id);
     }

@@ -39,6 +39,15 @@ public class Prodotto {
     @Column(name = "descrizione")
     private String descrizione;
 
+    @Basic
+    @Column(name = "immagine")
+    private String immagine;
+
+
+    @Basic
+    @Column(name = "disponibilita")
+    private int disponibilita;
+
     @OneToMany(mappedBy = "prodotto", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<ProdottoCarrello> prodottiCarrello;
@@ -52,7 +61,7 @@ public class Prodotto {
     @Getter
     @ToString
     public enum Sesso{
-        MASCHIO,FEMMINA,UNISEX;
+        Maschile,Femminile,Unisex;
     }
 
 }
