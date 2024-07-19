@@ -10,7 +10,7 @@ class Shop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MyAppBar(),
+      appBar: const MyAppBar(onBackFromSuccessivePage: null,),
       body: Column(
         children: <Widget>[
           const SizedBox(height: 20.0),

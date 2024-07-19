@@ -14,11 +14,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
-import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
-
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -26,19 +21,6 @@ import static org.springframework.security.web.util.matcher.AntPathRequestMatche
 public class SecurityConfiguration {
 
     private final JwtAuthenticationConverter jwtAuthConverter;
-
-
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(auth -> auth.requestMatchers(
-//                //antMatcher("/api/sale"),//TODO serve?
-//                antMatcher("/api/sale/*"),
-//                antMatcher("")
-//        ).permitAll().anyRequest().authenticated());
-//        http.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter)));
-//        http.sessionManagement(sess -> sess.sessionCreationPolicy(STATELESS));
-//        return http.build();
-//    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

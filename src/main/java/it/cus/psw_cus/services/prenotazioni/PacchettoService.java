@@ -53,16 +53,4 @@ public class PacchettoService {
         pacchetto.setPrezzoUnitario(dettagli.getPrezzoUnitario());
         pacchettoRepository.save(pacchetto);
     }
-
-//    @Transactional(readOnly = true)
-//    public float getPrezzoScontato(int id, float scontoPercentuale) throws PackageNotFoundException {
-//        float intero = getPrezzoIntero(id);
-//        return intero - intero*scontoPercentuale/100;
-//    }
-//
-//    @Transactional(readOnly = true)
-//    public float getPrezzoIntero(int ingressi) throws PackageNotFoundException {
-//        Pacchetto p = getPacchettoByIngressi(ingressi);
-//        return p.getPrezzoUnitario()*p.getIngressi();
-//    }
 }

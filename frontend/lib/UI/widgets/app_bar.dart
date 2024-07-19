@@ -5,44 +5,48 @@ import '../../model/objects/authenticator.dart';
 
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const MyAppBar({super.key});
+  final VoidCallback? onBackFromSuccessivePage;
+  const MyAppBar({super.key, required this.onBackFromSuccessivePage});
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: false,
-      title: const Text('Cus cosenza'),
+      title: Text(isLoggedIn? "Cus Cosenza":"Cus Cosenza (sessione Guest)"),
       actions: <Widget>[
         TextButton(
           onPressed: () {
-            Navigator.pushNamed(context, '/abbonamenti');
+            Navigator.pushNamed(context, '/abbonamenti').then((_) {onBackFromSuccessivePage?.call();});
           },
           child: const Text('Abbonamenti', style: TextStyle(color: Colors.white)),
         ),
-        TextButton(
-          onPressed: () {
-            Navigator.pushNamed(context, '/prenota');
-          },
-          child: const Text('Prenota', style: TextStyle(color: Colors.white)),
-        ),
+        if (isLoggedIn)
+          TextButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/prenota').then((_) {onBackFromSuccessivePage?.call();});
+            },
+            child: const Text('Prenota', style: TextStyle(color: Colors.white)),
+          ),
         TextButton(
           onPressed: () {
             Navigator.pushNamed(context, '/shop');
           },
           child: const Text('Shop', style: TextStyle(color: Colors.white)),
         ),
-        TextButton(
-          onPressed: () {
-            Navigator.pushNamed(context, '/ordini');
-          },
-          child: const Text('I miei ordini', style: TextStyle(color: Colors.white)),
-        ),
-        IconButton(
-          onPressed: () {
-            Navigator.pushNamed(context, '/carrello');
-          },
-          icon: const Icon(Icons.shopping_cart, color: Colors.white),
-        ),
+        if (isLoggedIn)
+          TextButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/ordini');
+            },
+            child: const Text('I miei ordini', style: TextStyle(color: Colors.white)),
+          ),
+        if (isLoggedIn)
+          IconButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/carrello');
+            },
+            icon: const Icon(Icons.shopping_cart, color: Colors.white),
+          ),
         if (isLoggedIn)
           TextButton(
             onPressed: () {

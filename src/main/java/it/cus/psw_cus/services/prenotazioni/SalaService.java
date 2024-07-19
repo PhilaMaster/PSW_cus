@@ -1,7 +1,6 @@
 package it.cus.psw_cus.services.prenotazioni;
 
 import it.cus.psw_cus.entities.Sala;
-import it.cus.psw_cus.repositories.prenotazioni.AbbonamentoRepository;
 import it.cus.psw_cus.repositories.prenotazioni.SalaRepository;
 import it.cus.psw_cus.support.exceptions.SalaAlreadyExistsException;
 import it.cus.psw_cus.support.exceptions.SalaNotFoundException;
@@ -15,7 +14,7 @@ import java.util.List;
 public class SalaService {
     private final SalaRepository salaRepository;
 
-    public SalaService(SalaRepository salaRepository, AbbonamentoRepository abbonamentoRepository) {
+    public SalaService(SalaRepository salaRepository) {
         this.salaRepository = salaRepository;
     }
 

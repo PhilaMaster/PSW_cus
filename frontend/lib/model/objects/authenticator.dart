@@ -6,7 +6,6 @@ import 'package:frontend/model/objects/LogInResult.dart';
 import 'package:frontend/model/objects/utente.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
-import '../../UI/widgets/app_bar.dart';
 import 'autentication_data.dart';
 import 'package:http/http.dart' as http;
 
@@ -71,7 +70,6 @@ class Authenticator{
 
 
     } catch (e) {
-      print(e);
       return LogInResult.error_unknown;
     }
   }

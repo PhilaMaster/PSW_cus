@@ -15,7 +15,16 @@ class BigTitleStyle extends TextStyle {
 
   @override
   FontWeight get fontWeight => FontWeight.w300;
+  @override
+  double get fontSize => 24;
+}
 
+class MediumTitleStyle extends TextStyle {
+
+  @override
+  FontWeight get fontWeight => FontWeight.w300;
+  @override
+  double get fontSize => 20;
 }
 
 class TitleStyle extends TextStyle {

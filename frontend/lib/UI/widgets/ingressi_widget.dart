@@ -15,15 +15,15 @@ class Ingressiwidget extends StatelessWidget {
 
     if (ingressi > 15) {
       iconData = Icons.sentiment_very_satisfied;
-      message = 'Buon allenamento!';
+      message = 'Ingressi OK! Buon allenamento!';
       iconColor = Colors.green;
-    } else if (ingressi >= 7) {
+    } else if (ingressi > 0) {
       iconData = Icons.sentiment_neutral;
-      message = 'Ingressi in esaurimento, fai un salto nella sezione "Abbonamenti" per acqusitarli!';
+      message = 'Ingressi in esaurimento, fai un salto alla sezione "Abbonamenti" per acqusitarli!';
       iconColor = Colors.yellow;
     } else {
       iconData = Icons.sentiment_very_dissatisfied;
-      message = 'Acquistane altri nella sezione "Abbonamenti"!';
+      message = 'Ingressi esauriti, acquistali nella sezione "Abbonamenti"!';
       iconColor = Colors.red;
     }
 

@@ -13,4 +13,5 @@ public interface PrenotazioneRepository extends JpaRepository<Prenotazione,Integ
 
     List<Prenotazione> findByUtenteAndDataAfter(Utente utente, Date data);
     List<Prenotazione> findByUtente(Utente utente);
+    boolean existsPrenotazioneByUtenteAndDataAndFasciaOrariaAndSala(Utente utente, Date data, FasciaOraria fasciaOraria, Sala sala);
 }

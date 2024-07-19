@@ -8,7 +8,7 @@ class mieiOrdini extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      appBar: MyAppBar(),
+      appBar: MyAppBar(onBackFromSuccessivePage: null,),
       body: Center(
         child: Text('Questa è la pagina degli ordini.'),
       ),

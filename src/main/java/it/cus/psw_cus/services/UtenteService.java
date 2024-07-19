@@ -43,6 +43,7 @@ public class UtenteService {
     }
 
     public int ingressiUtente(int id) throws UserNotFoundException, UnauthorizedAccessException {
+        if (id!= Utils.getId()) throw new UnauthorizedAccessException();
         return abbonamentoRepository.contaIngressiRimanentiUtente(cercaUtente(id));
     }
 

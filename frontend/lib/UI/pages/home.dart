@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend/UI/widgets/ingressi_widget.dart';
 import 'package:frontend/UI/widgets/app_bar.dart';
 import 'package:frontend/model/objects/authenticator.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 
 import '../../model/objects/prenotazioni/prenotazione.dart';
-import '../../model/objects/prenotazioni/sala.dart';
 import '../../model/objects/utente.dart';
 
 class HomePage extends StatefulWidget {
@@ -42,7 +40,16 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MyAppBar(),
+      appBar: MyAppBar(onBackFromSuccessivePage: (){
+        //codice da eseguire quando da un'altra pagina torno indietro alla home
+        setState(() {
+          //aggiorno le prenotazioni future
+          futurePrenotazioni = PrenotazioneService.getPrenotazioniFutureUtente(user.id);
+          //aggiorno gli ingressi (non è richiesta l'esecuzione di altro codice ma basta il setState() stesso)
+          // Questo può essere fatto solo se il widget Ingressiwidget supporta un metodo di aggiornamento
+          // futureIngressi = UtenteService.getIngressi(user.id);
+        });
+      }),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -151,13 +158,6 @@ class _HomePageState extends State<HomePage> {
 
       ),
     );
-  }
-
-  String continua(int? ingressi) {
-    if(ingressi!>10) {
-      return '';
-    }
-    return ', comprane altri dalla sezione "Abbonamenti"';
   }
 }
 

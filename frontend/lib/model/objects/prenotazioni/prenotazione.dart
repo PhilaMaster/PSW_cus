@@ -38,9 +38,9 @@ class Prenotazione{
       'id': id,
       'utente': utente.toJson(),
       'sala': sala.toJson(),
-      'fasciaOraria': fasciaOraria.toString(),
+      'fasciaOraria': fasciaOraria.toString().split(".")[1],
       // 'data': data.toIso8601String(),
-      'data': data.toIso8601String().split(" ")[0],//TODO testare se funziona. Prendo la prima parte, ovvero solo data senza ora
+      'data': data.toIso8601String().split(" ")[0],
     };
   }
 
@@ -49,23 +49,7 @@ class Prenotazione{
     return "Prenotazione $id, dell'utente $utente, nella sala $sala in data $data, nella fascia oraria $fasciaOraria";
   }
 }
-// enum FasciaOraria{
-//   DIECI_DODICI(orario:"10-12"),
-//   DODICI_QUATTORDICI(orario:"12-14"),
-//   QUATTORDICI_SEDICI(orario:"14-16"),
-//   SEDICI_DICIOTTO(orario:"16-18"),
-//   DICIOTTO_VENTI(orario:"18-20"),
-//   VENTI_VENTIDUE(orario:"20-22");
-//
-//   final String orario;
-//
-//   const FasciaOraria({required this.orario})
-//
-//   @override
-//   String toString() {
-//     return orario;
-//   }
-// }
+
 enum FasciaOraria {
   DIECI_DODICI,
   DODICI_QUATTORDICI,
@@ -90,6 +74,25 @@ extension FasciaOrariaExtension on FasciaOraria {
         return '18:00-20:00';
       case FasciaOraria.VENTI_VENTIDUE:
         return '20:00-22:00';
+      default:
+        return 'Orario non valido';
+    }
+  }
+
+  String get perJson {
+    switch (this) {
+      case FasciaOraria.DIECI_DODICI:
+        return 'DIECI_DODICI';
+      case FasciaOraria.DODICI_QUATTORDICI:
+        return 'DODICI_QUATTORDICI';
+      case FasciaOraria.QUATTORDICI_SEDICI:
+        return 'QUATTORDICI_SEDICI';
+      case FasciaOraria.SEDICI_DICIOTTO:
+        return 'SEDICI_DICIOTTO';
+      case FasciaOraria.DICIOTTO_VENTI:
+        return 'DICIOTTO_VENTI';
+      case FasciaOraria.VENTI_VENTIDUE:
+        return 'VENTI_VENTIDUE';
       default:
         return 'Orario non valido';
     }
@@ -150,19 +153,29 @@ class PrenotazioneService {
 
   static Future<String> createPrenotazione(Prenotazione prenotazione) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/prenotazioni'),
+      Uri.parse(baseUrl),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer ${Authenticator().getToken()}'
       },
       body: jsonEncode(prenotazione.toJson()),
     );
 
-    if (response.statusCode == 201) {
-      return 'Prenotazione creata con successo';
-    } else if (response.statusCode == 400) {
-      return response.body;
-    } else {
-      throw Exception('Impossibile creare la prenotazione');
+    switch (response.statusCode) {
+      case 201:
+        return 'Prenotazione creata con successo';
+      case 400:
+        throw Exception(response.body);
+      case 401:
+        throw Exception('Utente non loggato');
+      case 404:
+        throw Exception(response.body);
+      case 409:
+        throw Exception('Prenotazione duplicata');
+      case 412:
+        throw Exception('Ingressi insufficienti');
+      default:
+        throw Exception('Impossibile creare la prenotazione');
     }
   }
 }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/UI/pages/home.dart';
 import 'package:frontend/model/objects/prenotazioni/abbonamento.dart';
 import 'package:frontend/model/objects/prenotazioni/pacchetto.dart';
 
 import '../../../model/objects/utente.dart';
+import '../../widgets/app_bar.dart';
 
 class Abbonamenti extends StatefulWidget {
   const Abbonamenti({super.key});
@@ -26,9 +26,8 @@ class _AbbonamentiState extends State<Abbonamenti> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Abbonamenti'),
-        automaticallyImplyLeading: false,
+      appBar: const MyAppBar(
+        onBackFromSuccessivePage: null,
       ),
       body:
       Padding(
@@ -156,8 +155,6 @@ class _AbbonamentiState extends State<Abbonamenti> {
                 setState(() {
                   //aggiorno gli abbonamenti visualizzati nella pagina stessa
                   futureAbbonamenti = AbbonamentoService.getAbbonamentiByUtenteWithPositiveRimanenti(utenteLoggato.id);
-                  //aggiorno le prenotazioni nella home (nel caso si tornasse indietro dal browser)
-                  // futureIngressi = UtenteService.getIngressi(utenteLoggato.id);
                 });
               },
               child: const Text('OK'),

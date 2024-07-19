@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:frontend/model/objects/prenotazioni/prenotazione.dart';
 import 'package:http/http.dart' as http;
+
 
 class Sala{
   final int id,capienza;
@@ -96,6 +98,20 @@ class SalaService{
     if (response.statusCode == 404) {
       throw Exception('Impossibile trovare la sala');
     } else if (response.statusCode!=200) {
+      throw Exception('Errore generico');
+    }
+  }
+
+  static Future<int> getPostiOccupati(int id, FasciaOraria fasciaOraria, DateTime data) async {
+    final response = await http.get(Uri.parse('$baseUrl/$id/postiOccupati?fasciaOraria=${fasciaOraria.toString().split('.')[1]}&data=${data.toIso8601String().split(' ')[0]}'),
+    //    headers: {'Authorization': 'Bearer ${Authenticator().getToken()}'}
+    );
+
+    if (response.statusCode == 200) {
+      return int.parse(response.body);
+    } else if (response.statusCode == 404) {
+      throw Exception('Impossibile trovare la sala');
+    } else {
       throw Exception('Errore generico');
     }
   }

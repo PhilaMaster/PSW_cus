@@ -12,12 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import java.text.DateFormat;
 
 import javax.validation.Valid;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -82,7 +78,7 @@ public class    SalaController {
 //        return new ResponseEntity<>(salaService.isDisponibile(id,data,fasciaOraria), HttpStatus.OK);
 //    }
 
-    @PreAuthorize("hasRole('utente')")
+    //@PreAuthorize("hasRole('utente')")
     @GetMapping("/{id}/postiOccupati")
     public ResponseEntity<Integer> getPostiOccupati(@PathVariable int id,
                                                     @RequestParam Prenotazione.FasciaOraria fasciaOraria,

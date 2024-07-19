@@ -40,4 +40,7 @@ public class Abbonamento {
     private void postPersist() {
         this.rimanenti = pacchetto.getIngressi();
     }
+
+    @Version
+    private int version;
 }

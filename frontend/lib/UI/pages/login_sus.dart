@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../model/objects/LogInResult.dart';
 import '../../model/objects/authenticator.dart';
-import '../widgets/app_bar.dart';
 
 
 

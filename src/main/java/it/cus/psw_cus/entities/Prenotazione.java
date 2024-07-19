@@ -28,15 +28,6 @@ public class Prenotazione {
     @JoinColumn(name = "sala")
     private Sala sala;
 
-    //fascia oraria, TODO scegliere il modo migliore per la sua memorizzazione
-    //possibilità:
-    // intero (da 0 a n-1) dove n sono le fasce orarie, da gestire assieme al frontend
-    // due interi, ora inizio e ora fine
-    // datetime
-    // stringa, da gestire assieme a frontend
-//    @Basic
-//    @Column(name = "fascia_oraria", length = 5)//formato: 10-12, 12-14, ecc.
-//    private String fasciaOraria;
     @Enumerated(EnumType.STRING)
     @Column(name = "fascia_oraria", nullable = false)
     private FasciaOraria fasciaOraria;
