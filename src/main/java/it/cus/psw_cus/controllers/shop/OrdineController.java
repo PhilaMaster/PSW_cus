@@ -10,6 +10,7 @@ import it.cus.psw_cus.support.exceptions.UnauthorizedAccessException;
 import it.cus.psw_cus.support.exceptions.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,24 +30,28 @@ public class OrdineController {
         this.utenteService = utenteService;
     }
 
+    @PreAuthorize("hasRole('user')")
     @PostMapping
     public ResponseEntity<?> salvaOrdine(@RequestBody @Valid Ordine ordine) {
         Ordine savedOrdine = ordineService.salvaOrdine(ordine);
         return new ResponseEntity<>(savedOrdine, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('admin')")
     @GetMapping
     public ResponseEntity<List<Ordine>> trovaTuttiGliOrdini() {
         List<Ordine> ordini = ordineService.trovaTuttiGliOrdini();
         return new ResponseEntity<>(ordini, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('utente')")
     @GetMapping("/data")
     public ResponseEntity<List<Ordine>> filtraPerData(@RequestParam Date inizio, @RequestParam Date fine) {
         List<Ordine> ordini = ordineService.filtraPerData(inizio, fine);
         return new ResponseEntity<>(ordini, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('utente')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminaOrdine(@PathVariable int id) {
         try {
@@ -57,6 +62,7 @@ public class OrdineController {
         }
     }
 
+    @PreAuthorize("hasRole('admin')")
     @GetMapping("/{utenteId}")
     public ResponseEntity<?> trovaOrdinePerUtente(@PathVariable int utenteId) {
         try {
@@ -67,7 +73,9 @@ public class OrdineController {
             } else {
                 return new ResponseEntity<>(new ResponseMessage("Ordine non trovato per l'utente"), HttpStatus.NOT_FOUND);
             }
-        } catch (UserNotFoundException e) {
+        } catch(UnauthorizedAccessException u){
+            return new ResponseEntity<>(new ResponseMessage("Utente non autorizzato"), HttpStatus.UNAUTHORIZED);
+        }catch (UserNotFoundException e) {
             return new ResponseEntity<>(new ResponseMessage("Utente non trovato"), HttpStatus.NOT_FOUND);
         }
     }

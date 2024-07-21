@@ -32,6 +32,7 @@ public class Cart {
     private Set<ProdottoCarrello> prodotti = new HashSet<>();
 
     @Version
+    @Column(name="version", nullable = true)
     private int version;
 
 }

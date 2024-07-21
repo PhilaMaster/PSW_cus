@@ -34,11 +34,11 @@ public class Utente {
     @Column(name = "sesso", nullable = false, length = 25)
     private Sesso sesso;
 
-    @OneToMany(mappedBy="utente", cascade = CascadeType.MERGE )
+    @OneToMany(mappedBy="utente", cascade = CascadeType.ALL )
     @JsonIgnore
     private List<Prenotazione> prenotazioni;
 
-    @OneToMany(mappedBy="utente", cascade = CascadeType.MERGE )
+    @OneToMany(mappedBy="utente", cascade = CascadeType.ALL )
     @JsonIgnore
     private List<Abbonamento> abbonamenti;
 

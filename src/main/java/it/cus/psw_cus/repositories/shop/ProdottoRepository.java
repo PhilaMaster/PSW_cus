@@ -11,6 +11,8 @@ import java.util.List;
 @Repository
 public interface ProdottoRepository extends JpaRepository<Prodotto,Integer> {
 
+    List<Prodotto> findAll();
+
     @Query("SELECT p from Prodotto p where p.nome LIKE ?1")
     List<Prodotto> findByNome(String nome);
 

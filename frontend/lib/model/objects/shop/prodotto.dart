@@ -8,6 +8,7 @@ class Prodotto {
   final String categoria;
   final String descrizione;
   final String sesso;
+  final String immagine;
 
   Prodotto({
     required this.nome,
@@ -15,6 +16,7 @@ class Prodotto {
     required this.categoria,
     required this.descrizione,
     required this.sesso,
+    required this.immagine,
   });
 
   factory Prodotto.fromJson(Map<String, dynamic> json) {
@@ -24,6 +26,7 @@ class Prodotto {
       categoria: json['categoria'],
       descrizione: json['descrizione'],
       sesso: json['sesso'],
+      immagine: json['immagine'],
     );
   }
 
@@ -33,6 +36,7 @@ class Prodotto {
     'categoria': categoria,
     'descrizione': descrizione,
     'sesso': sesso,
+    'immagine': immagine,
   };
 
   @override

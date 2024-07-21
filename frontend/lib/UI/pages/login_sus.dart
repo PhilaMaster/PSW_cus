@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import '../../model/objects/LogInResult.dart';
 import '../../model/objects/authenticator.dart';
 
-
-
 class LoginSus extends StatefulWidget {
   const LoginSus({super.key});
 
@@ -45,15 +43,14 @@ class LoginSusState extends State<LoginSus> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      appBar: const MyAppBar(), // Usando l'AppBar personalizzata
+      body: Center(
+
+        child:SizedBox(
+          width: 900,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -85,7 +82,22 @@ class LoginSusState extends State<LoginSus> {
               _errorMessage,
               style: const TextStyle(color: Colors.red),
             ),
+            const SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const Text("Non sei registrato?"),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/register');
+                  },
+                  child: const Text('Registrati'),
+                ),
+              ],
+            )
+
           ],
+        ),
         ),
       ),
     );

@@ -15,4 +15,5 @@ public interface ProdottoCarrelloRepository extends JpaRepository<ProdottoCarrel
 
     @Query("SELECT pc FROM ProdottoCarrello pc WHERE pc.cart = ?1 AND pc.prodotto.id = ?2")
     ProdottoCarrello findByCartAndProdottoId(Cart cart, int prodottoId);
+
 }

@@ -8,7 +8,7 @@ class Shop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      appBar: MyAppBar(onBackFromSuccessivePage: null,),
+      appBar: MyAppBar(),
       body: Center(
         child: Text('Questa è il carrello.'),
       ),
