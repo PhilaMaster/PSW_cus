@@ -46,8 +46,6 @@ class _HomePageState extends State<HomePage> {
           //aggiorno le prenotazioni future
           futurePrenotazioni = PrenotazioneService.getPrenotazioniFutureUtente(user.id);
           //aggiorno gli ingressi (non è richiesta l'esecuzione di altro codice ma basta il setState() stesso)
-          // Questo può essere fatto solo se il widget Ingressiwidget supporta un metodo di aggiornamento
-          // futureIngressi = UtenteService.getIngressi(user.id);
         });
       }),
       body: Padding(

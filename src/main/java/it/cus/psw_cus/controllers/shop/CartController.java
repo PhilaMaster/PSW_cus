@@ -10,6 +10,7 @@ import it.cus.psw_cus.support.ResponseMessage;
 import it.cus.psw_cus.support.exceptions.EmptyCart;
 import it.cus.psw_cus.support.exceptions.QuantitaErrata;
 import it.cus.psw_cus.support.exceptions.UnauthorizedAccessException;
+import it.cus.psw_cus.support.exceptions.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,11 +37,13 @@ public class CartController {
             Utente utente = utenteService.cercaUtente(utenteId);
             Cart cart = cartService.carrelloUtente(utente);
             return new ResponseEntity<>(cart, HttpStatus.OK);
-        } catch(UnauthorizedAccessException u){
+        } catch(UnauthorizedAccessException e){
             return new ResponseEntity<>(new ResponseMessage("Utente non autorizzato"), HttpStatus.UNAUTHORIZED);
-        }
-        catch (Exception e) {
-            return new ResponseEntity<>(new ResponseMessage("Carrello non trovato"), HttpStatus.NOT_FOUND);
+        } catch(UserNotFoundException e){
+            return new ResponseEntity<>(new ResponseMessage("Utente non trovato"), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+//            e.printStackTrace();
+            return new ResponseEntity<>(new ResponseMessage("Errore generico"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

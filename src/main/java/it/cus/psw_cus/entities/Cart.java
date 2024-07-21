@@ -15,7 +15,7 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = "utente")
 @Table(name = "cart", schema="dbprova")
 public class Cart {
     @Id
@@ -23,12 +23,12 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToOne(fetch = FetchType.LAZY) //consente di prendere i dati solo quando realmente necessario
+    @OneToOne(fetch = FetchType.EAGER) //consente di prendere i dati solo quando realmente necessario
     @JoinColumn(name = "utente_id")
     private Utente utente;
 
     @Column(name = "prodotto")
-    @OneToMany(mappedBy = "cart", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "cart", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<ProdottoCarrello> prodotti = new HashSet<>();
 
     @Version
