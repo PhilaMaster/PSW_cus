@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../authenticator.dart';
 import 'cart.dart'; // Importa la classe Cart per i prodotti dell'ordine
 
 class Ordine {
@@ -16,13 +17,14 @@ class Ordine {
   });
 
   factory Ordine.fromJson(Map<String, dynamic> json) {
+    var list = json['prodotti'] as List;
+    List<ProdottoCarrello> prodottiList = list.map((i) => ProdottoCarrello.fromJson(i)).toList();
+
     return Ordine(
       id: json['id'],
       dataCreazione: DateTime.parse(json['dataCreazione']),
-      prezzoTotale: json['prezzoTotale'],
-      prodotti: (json['prodotti'] as List)
-          .map((item) => ProdottoCarrello.fromJson(item))
-          .toList(),
+      prezzoTotale: json['prezzoTotale'].toDouble(),
+      prodotti: prodottiList,
     );
   }
 
@@ -85,15 +87,21 @@ class OrdineService {
     }
   }
 
-  Future<Ordine?> trovaOrdinePerUtente(int utenteId) async {
-    final response = await http.get(Uri.parse('$baseUrl/$utenteId'));
+  Future<List<Ordine>> trovaOrdinePerUtente(int utenteId) async {
+    final response = await http.get(
+        Uri.parse('$baseUrl/utente/$utenteId'), // Modifica l'URL secondo necessità
+        headers: {
+          'Authorization': 'Bearer ${Authenticator().getToken()}'
+        }
+    );
 
     if (response.statusCode == 200) {
-      return Ordine.fromJson(json.decode(response.body));
+      List jsonResponse = json.decode(response.body);
+      return jsonResponse.map((item) => Ordine.fromJson(item)).toList();
     } else if (response.statusCode == 404) {
-      return null; // Ordine non trovato
+      return [];
     } else {
-      throw Exception('Impossibile ottenere l\'ordine per l\'utente');
+      throw Exception('Impossibile ottenere gli ordini per l\'utente');
     }
   }
 }

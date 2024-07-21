@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
         '/abbonamenti': (context) => const Abbonamenti(),
         '/prenota': (context) => const Prenota(),
         '/shop': (context) => const Shop(),
-        '/ordini': (context) => const mieiOrdini(),
+        '/ordini': (context) => const MieiOrdini(),
         '/login': (context) => const LoginSus(),
         '/register': (context) => const RegistrationPage(),
         '/carrello':(context) => const Carrello(),

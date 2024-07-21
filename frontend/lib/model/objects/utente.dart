@@ -80,6 +80,7 @@ class UtenteService{
     } else if (response.statusCode == 404) {
       throw Exception('Utente non trovato');
     } else {
+      print(response.body);
       throw Exception('Errore nel caricamento dell\'utente');
     }
   }
