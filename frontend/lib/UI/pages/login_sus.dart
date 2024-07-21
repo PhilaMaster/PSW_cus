@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../model/objects/LogInResult.dart';
 import '../../model/objects/authenticator.dart';
+import '../widgets/app_bar.dart';
 
 class LoginSus extends StatefulWidget {
   const LoginSus({super.key});
@@ -46,7 +47,7 @@ class LoginSusState extends State<LoginSus> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MyAppBar(), // Usando l'AppBar personalizzata
+      appBar: const MyAppBar(onBackFromSuccessivePage: null), // Usando l'AppBar personalizzata
       body: Center(
 
         child:SizedBox(
