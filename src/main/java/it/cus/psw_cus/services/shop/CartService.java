@@ -10,6 +10,7 @@ import it.cus.psw_cus.support.exceptions.QuantitaErrata;
 import it.cus.psw_cus.support.exceptions.UnauthorizedAccessException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -24,7 +25,7 @@ public class CartService {
     private final ProdottoRepository prodottoRepository;
 
     @Autowired
-    public CartService(CartRepository cartRepository, OrdineRepository ordineRepository, ProdottoRepository prodottoRepository) {
+    public CartService(CartRepository cartRepository, OrdineRepository ordineRepository, ProdottoRepository prodottoRepository, TaskExecutionAutoConfiguration taskExecutionAutoConfiguration) {
         this.cartRepository = cartRepository;
         this.ordineRepository = ordineRepository;
         this.prodottoRepository = prodottoRepository;
@@ -32,6 +33,7 @@ public class CartService {
 
     @Transactional
     public Cart carrelloUtente(Utente u) throws UnauthorizedAccessException {
+        System.out.println("id: " + u.getId()+ "id keycloack"+ Utils.getId());
         if (u.getId() != Utils.getId()) throw new UnauthorizedAccessException();
         return cartRepository.findByUtente(u);
     }

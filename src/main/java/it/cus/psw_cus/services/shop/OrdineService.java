@@ -25,24 +25,20 @@ public class OrdineService {
         this.ordineRepository = ordineRepository;
     }
 
-    @PreAuthorize("hasRole('utente')")
     @Transactional
     public Ordine salvaOrdine(Ordine ordine) {return ordineRepository.save(ordine);}
 
 
-    @PreAuthorize("hasRole('admin')")
     @Transactional
     public List<Ordine> trovaTuttiGliOrdini() {
         return ordineRepository.findAll();
     }
 
-    @PreAuthorize("hasRole('utente')")
     @Transactional
     public List<Ordine> filtraPerData(Date inizio, Date fine){
         return ordineRepository.findByDataCreazioneBetween(inizio,fine);
     }
 
-    @PreAuthorize("hasRole('utente')")
     @Transactional
     public void eliminaOrdine(int id) throws OrdineNotFoundException {
         Ordine ordine = ordineRepository.findById(id)
@@ -50,7 +46,7 @@ public class OrdineService {
         ordineRepository.delete(ordine);
     }
 
-    @PreAuthorize("hasRole('admin')")
+
     @Transactional
     public Optional<Ordine> trovaOrdinePerUtente(Utente utente) throws OrdineNotFoundException, UnauthorizedAccessException {
         if (utente.getId() != Utils.getId()) throw new UnauthorizedAccessException();

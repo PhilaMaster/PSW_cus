@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/model/objects/shop/cart.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../../../model/objects/authenticator.dart';
 import '../../../model/objects/shop/prodotto.dart';
+import '../../../model/objects/utente.dart';
 import '../../widgets/app_bar.dart';
 
 class Shop extends StatefulWidget {
@@ -18,12 +21,18 @@ class _ShopState extends State<Shop> {
   late Future<List<Prodotto>> _allProdottiFuture;
   List<Prodotto> _displayedProdotti = [];
   Map<int, int> _quantities = {};
+  late Utente user;
+
 
   @override
   void initState() {
     super.initState();
     _allProdottiFuture = ProdottoService().getAllProdotti();
     _loadProdotti();
+    if(isLoggedIn){
+      user = utenteLoggato!;
+    }
+
   }
 
   Future<void> _loadProdotti() async {
@@ -119,7 +128,7 @@ class _ShopState extends State<Shop> {
                 const SizedBox(width: 20.0),
                 // Barra di ricerca
                 SizedBox(
-                  width: 300.0, // Imposta una larghezza specifica per la barra di ricerca
+                  width: 300.0,
                   child: TextField(
                     controller: _searchController,
                     onChanged: _search,
@@ -166,13 +175,7 @@ class _ShopState extends State<Shop> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              FadeInImage.assetNetwork(
-                                placeholder: 'assets/placeholder.png',
-                                image: prodotto.immagine,
-                                imageErrorBuilder: (context, error, stackTrace) {
-                                  return Image.asset('assets/placeholder.png');
-                                },
-                              ),
+                             Image.asset(prodotto.immagine,width: 220,height: 220,),
                               const SizedBox(width: 200,),
                               Expanded(
                                 child: Column(
@@ -220,11 +223,11 @@ class _ShopState extends State<Shop> {
                                   const SizedBox(height: 20,),
                                   ElevatedButton(
                                     onPressed: () {
-                                      // Implementa la logica per aggiungere al carrello
+                                      CartService().addProdotto(user.id, prodotto as ProdottoCarrello);
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.white, // Sfondo bianco
-                                      iconColor: Colors.black, // Testo nero
+                                      backgroundColor: Colors.white,
+                                      iconColor: Colors.black,
                                     ),
                                     child: const Text('Aggiungi al carrello'),
                                   ),

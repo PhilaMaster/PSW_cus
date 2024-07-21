@@ -29,7 +29,7 @@ public class CartController {
         this.utenteService = utenteService;
     }
 
-    @PreAuthorize("hasRole('utente')")
+   @PreAuthorize("hasRole('utente')")
     @GetMapping("/{utenteId}")
     public ResponseEntity<?> getCart(@PathVariable int utenteId) {
         try {

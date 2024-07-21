@@ -33,7 +33,7 @@ public class Sala {
     @Column(name = "capienza", nullable = false)
     private int capienza;
 
-    @OneToMany(mappedBy="sala", cascade = CascadeType.MERGE )
+    @OneToMany(mappedBy="sala", cascade = CascadeType.MERGE ) //cambiare il merge
     @JsonIgnore
     private List<Prenotazione> prenotazioni;
 }
