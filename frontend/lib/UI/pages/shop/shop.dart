@@ -116,7 +116,7 @@ class _ShopState extends State<Shop> {
                 DropdownButton<String>(
                   value: _selectedCategory,
                   hint: const Text('Categoria'),
-                  items: <String>['Elettronica', 'Abbigliamento', 'Casa', 'Sport', 'Gioielli', 'Libri']
+                  items: <String>['Accessori', 'Abbigliamento', 'Attrezzature', 'Integratori']
                       .map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,

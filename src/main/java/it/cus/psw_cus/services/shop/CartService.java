@@ -33,7 +33,6 @@ public class CartService {
 
     @Transactional
     public Cart carrelloUtente(Utente u) throws UnauthorizedAccessException {
-        System.out.println("id: " + u.getId()+ "id keycloack"+ Utils.getId());
         if (u.getId() != Utils.getId()) throw new UnauthorizedAccessException();
         return cartRepository.findByUtente(u);
     }
