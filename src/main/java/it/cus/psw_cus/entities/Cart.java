@@ -14,7 +14,7 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "utente")
 @EqualsAndHashCode(exclude = "utente")
 @Table(name = "cart", schema="dbprova")
 public class Cart {

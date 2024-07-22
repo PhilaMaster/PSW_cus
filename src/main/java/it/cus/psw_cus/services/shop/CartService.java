@@ -6,10 +6,7 @@ import it.cus.psw_cus.repositories.shop.CartRepository;
 import it.cus.psw_cus.repositories.shop.OrdineRepository;
 import it.cus.psw_cus.repositories.shop.ProdottoRepository;
 import it.cus.psw_cus.support.authentication.Utils;
-import it.cus.psw_cus.support.exceptions.EmptyCart;
-import it.cus.psw_cus.support.exceptions.QuantitaErrata;
-import it.cus.psw_cus.support.exceptions.SessionError;
-import it.cus.psw_cus.support.exceptions.UserNotFoundException;
+import it.cus.psw_cus.support.exceptions.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
@@ -43,9 +40,9 @@ public class CartService {
     }
 
     @Transactional
-    public void addProdotto(Utente utente, ProdottoCarrello prodottoCarrello) throws QuantitaErrata, UserNotFoundException {
+    public void addProdotto(Utente utente, ProdottoCarrelloDTO prodottoCarrelloDTO) throws QuantitaErrata, UserNotFoundException, ProdottoNotFoundException {
         Utente u = utenteRepository.findById(Utils.getId()).orElseThrow(UserNotFoundException::new);
-        if (prodottoCarrello.getQuantita() <= 0) throw new QuantitaErrata("Quantità non valida");
+        if (prodottoCarrelloDTO.quantita() <= 0) throw new QuantitaErrata("Quantità non valida");
 
         Cart cart = cartRepository.findByUtente(u);
         if (cart == null) {
@@ -53,19 +50,44 @@ public class CartService {
             cart.setUtente(utente);
         }
 
-        prodottoCarrello.setCart(cart);
-        cart.getProdotti().add(prodottoCarrello);
+
+        Prodotto pr = prodottoRepository.findById(prodottoCarrelloDTO.idProdotto()).orElseThrow(ProdottoNotFoundException::new);
+        boolean presente = false;
+        Set<ProdottoCarrello> prodottiCarrello =  cart.getProdotti();
+        for(ProdottoCarrello pc : prodottiCarrello){
+            Prodotto p = pc.getProdotto();
+            if(p.equals(pr)){
+                pc.setQuantita(pc.getQuantita() + prodottoCarrelloDTO.quantita());
+                presente = true;
+                break;
+            }
+        }
+        if(!presente){
+            ProdottoCarrello prodottoCarrello = new ProdottoCarrello();
+            prodottoCarrello.setCart(cart);
+            prodottoCarrello.setProdotto(pr);
+            prodottoCarrello.setQuantita(prodottoCarrelloDTO.quantita());
+            prodottiCarrello.add(prodottoCarrello);
+        }
+
         cartRepository.save(cart);
     }
 
     @Transactional
-    public void rimuoviProdotto(ProdottoCarrello prodottoCarrello) throws UserNotFoundException {
+    public void rimuoviProdotto(ProdottoCarrelloDTO prodottoCarrelloDTO) throws UserNotFoundException, ProdottoNotFoundException {
         Utente u = utenteRepository.findById(Utils.getId()).orElseThrow(UserNotFoundException::new);
         Cart cart = cartRepository.findByUtente(u);
-        if (cart != null) {
-            cart.getProdotti().remove(prodottoCarrello);
-            cartRepository.save(cart);
+        Set<ProdottoCarrello> prodottiCarrello = cart.getProdotti();
+        Prodotto p = prodottoRepository.findById(prodottoCarrelloDTO.idProdotto()).orElseThrow(ProdottoNotFoundException::new);
+        System.out.println(p);
+        for(ProdottoCarrello pc : prodottiCarrello){
+            System.out.println("pc:"+pc.getProdotto());
+            if(pc.getProdotto().equals(p)){
+                prodottiCarrello.remove(pc);
+                break;
+            }
         }
+        cartRepository.save(cart);
     }
 
     @Transactional(rollbackOn = {QuantitaErrata.class})
@@ -116,3 +138,4 @@ public class CartService {
         return ordine;
     }
 }
+

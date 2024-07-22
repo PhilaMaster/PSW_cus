@@ -1,5 +1,6 @@
 package it.cus.psw_cus.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -9,7 +10,7 @@ import lombok.ToString;
 @Entity
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "ordine")
 @EqualsAndHashCode(exclude = "ordine")
 @Table(name = "prodotto_ordine", schema = "dbprova")
 public class ProdottoOrdine {
@@ -23,7 +24,8 @@ public class ProdottoOrdine {
     @JoinColumn(name = "prodotto_id")
     private ProdottoCarrello prodottoCarrello;
 
-    @ManyToOne()
+    @JsonIgnore
+    @ManyToOne
     @JoinColumn(name = "ordine_id")
     private Ordine ordine;
 

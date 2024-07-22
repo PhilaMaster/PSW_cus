@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 @Setter
 @EqualsAndHashCode
-@ToString
+@ToString(exclude = "prodottiCarrello")
 @Table( name = "prodotto",schema = "dbprova")
 public class Prodotto {
 

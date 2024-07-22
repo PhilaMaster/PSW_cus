@@ -15,7 +15,7 @@ import java.util.Set;
 @Getter
 @Setter
 @EqualsAndHashCode(exclude = {"cart", "prenotazioni","abbonamenti","ordini"})
-@ToString
+@ToString(exclude = {"cart", "prenotazioni","abbonamenti","ordini"})
 @Table(name = "utente")
 public class Utente {
     @Id

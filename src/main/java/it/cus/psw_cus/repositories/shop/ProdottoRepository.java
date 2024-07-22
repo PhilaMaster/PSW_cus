@@ -31,6 +31,6 @@ public interface ProdottoRepository extends JpaRepository<Prodotto,Integer> {
             "(p.sesso = COALESCE(:sesso, p.sesso))")
     List<Prodotto> findByNomeAndPrezzoAndCategoriaAndSesso(String nome, double prezzo, String categoria, Prodotto.Sesso sesso);
 
-    Prodotto findById(int id);
+    //Prodotto findById(int id);
 
 }

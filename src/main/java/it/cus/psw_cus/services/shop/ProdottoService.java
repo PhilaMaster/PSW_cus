@@ -38,7 +38,7 @@ public class ProdottoService {
 
     @Transactional
     public Prodotto findById(int id) throws ProdottoNotFoundException{
-        return prodottoRepository.findById(id);
+        return prodottoRepository.findById(id).orElseThrow(ProdottoNotFoundException::new);
     }
 
     @Transactional
@@ -58,7 +58,7 @@ public class ProdottoService {
 
     @Transactional
     public Prodotto updateProdotto(int id, Prodotto prodottoDettagli) throws ProdottoNotFoundException {
-        Prodotto prodotto = prodottoRepository.findById(id);
+        Prodotto prodotto = prodottoRepository.findById(id).orElseThrow(ProdottoNotFoundException::new);
 
         prodotto.setNome(prodottoDettagli.getNome());
         prodotto.setPrezzo(prodottoDettagli.getPrezzo());
