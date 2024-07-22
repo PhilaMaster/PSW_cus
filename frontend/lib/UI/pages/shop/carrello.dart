@@ -15,6 +15,7 @@ class Carrello extends StatefulWidget {
 class _CarrelloState extends State<Carrello> {
   late Utente user;
   late Future<Cart> _cartFuture;
+  late Cart carrello;
   final CartService _cartService = CartService();
   String? _checkoutError;
 
@@ -25,14 +26,13 @@ class _CarrelloState extends State<Carrello> {
       user = utenteLoggato!;
       _cartFuture = _cartService.getCart(user.id);
     } else {
-      // Gestione caso non loggato
       _cartFuture = Future.error('Utente non loggato');
     }
   }
 
-  Future<void> _checkout() async {
+  Future<void> _checkout(Cart c) async {
     try {
-      final ordine = await _cartService.checkout(user.id);
+      final ordine = await _cartService.checkout(c);
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => ConfermaOrdinePage(ordine: ordine)),
@@ -62,6 +62,7 @@ class _CarrelloState extends State<Carrello> {
                   return const Center(child: Text('Il carrello è vuoto.'));
                 } else {
                   final cart = snapshot.data!;
+                  carrello=cart;
                   return ListView.builder(
                     itemCount: cart.prodotti.length,
                     itemBuilder: (context, index) {
@@ -114,7 +115,11 @@ class _CarrelloState extends State<Carrello> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
-              onPressed: _checkout,
+              onPressed: () {
+                if (carrello != null) {
+                  _checkout(carrello);
+                }
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
                 iconColor: Colors.black,
@@ -122,6 +127,7 @@ class _CarrelloState extends State<Carrello> {
               child: const Text('Checkout'),
             ),
           ),
+
         ],
       ),
     );

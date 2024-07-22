@@ -7,6 +7,7 @@ import it.cus.psw_cus.entities.Utente;
 import it.cus.psw_cus.services.UtenteService;
 import it.cus.psw_cus.services.shop.CartService;
 import it.cus.psw_cus.support.ResponseMessage;
+import it.cus.psw_cus.support.authentication.Utils;
 import it.cus.psw_cus.support.exceptions.EmptyCart;
 import it.cus.psw_cus.support.exceptions.QuantitaErrata;
 import it.cus.psw_cus.support.exceptions.UnauthorizedAccessException;
@@ -32,45 +33,35 @@ public class CartController {
 
    @PreAuthorize("hasRole('utente')")
     @GetMapping("/{utenteId}")
-    public ResponseEntity<?> getCart(@PathVariable int utenteId) {
+    public ResponseEntity<?> getCart(){
         try {
-            Utente utente = utenteService.cercaUtente(utenteId);
-            Cart cart = cartService.carrelloUtente(utente);
+            Cart cart = cartService.carrelloUtente();
             return new ResponseEntity<>(cart, HttpStatus.OK);
-        } catch(UnauthorizedAccessException e){
-            return new ResponseEntity<>(new ResponseMessage("Utente non autorizzato"), HttpStatus.UNAUTHORIZED);
-        } catch(UserNotFoundException e){
-            return new ResponseEntity<>(new ResponseMessage("Utente non trovato"), HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
+        }  catch (Exception e) {
 //            e.printStackTrace();
             return new ResponseEntity<>(new ResponseMessage("Errore generico"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PreAuthorize("hasRole('utente')")
-    @PostMapping("/{utenteId}/add")
-    public ResponseEntity<?> addProdotto(@PathVariable int utenteId, @RequestBody @Valid ProdottoCarrello prodottoCarrello) {
+    @PostMapping("/add")
+    public ResponseEntity<?> addProdotto(@RequestBody @Valid ProdottoCarrello prodottoCarrello) {
         try {
-            Utente utente = utenteService.cercaUtente(utenteId);
+            Utente utente = utenteService.cercaUtente(Utils.getId());
             cartService.addProdotto(utente, prodottoCarrello);
             return new ResponseEntity<>(new ResponseMessage("Prodotto aggiunto al carrello"), HttpStatus.OK);
-        } catch(UnauthorizedAccessException u){
-            return new ResponseEntity<>(new ResponseMessage("Utente non autorizzato"), HttpStatus.UNAUTHORIZED);
         } catch (Exception e) {
-            e.printStackTrace();
             return new ResponseEntity<>(new ResponseMessage("Errore nell'aggiunta del prodotto al carrello"), HttpStatus.BAD_REQUEST);
         }
     }
 
     @PreAuthorize("hasRole('utente')")
-    @PostMapping("/{utenteId}/remove")
-    public ResponseEntity<?> rimuoviProdotto(@PathVariable int utenteId, @RequestBody @Valid ProdottoCarrello prodottoCarrello) {
+    @PostMapping("/remove")
+    public ResponseEntity<?> rimuoviProdotto(@RequestBody @Valid ProdottoCarrello prodottoCarrello) {
         try {
-            Utente utente = utenteService.cercaUtente(utenteId);
-            cartService.rimuoviProdotto(utente, prodottoCarrello);
+            Utente utente = utenteService.cercaUtente(Utils.getId());
+            cartService.rimuoviProdotto(prodottoCarrello);
             return new ResponseEntity<>(new ResponseMessage("Prodotto rimosso dal carrello"), HttpStatus.OK);
-        } catch(UnauthorizedAccessException u){
-            return new ResponseEntity<>(new ResponseMessage("Utente non autorizzato"), HttpStatus.UNAUTHORIZED);
         }
         catch (Exception e) {
             return new ResponseEntity<>(new ResponseMessage("Errore nella rimozione del prodotto dal carrello"), HttpStatus.BAD_REQUEST);
@@ -78,20 +69,17 @@ public class CartController {
     }
 
     @PreAuthorize("hasRole('utente')")
-    @PostMapping("/{utenteId}/checkout")
-    public ResponseEntity<?> checkout(@PathVariable int utenteId) {
+    @PostMapping("/checkout")
+    public ResponseEntity<?> checkout(@RequestBody @Valid Cart cart) {
         try {
-            Utente utente = utenteService.cercaUtente(utenteId);
-
-            Ordine ordine = cartService.checkout(utente);
+            Utente utente = utenteService.cercaUtente(Utils.getId());
+            Cart c = cartService.carrelloUtente();
+            Ordine ordine = cartService.checkout(c);
             if (ordine != null) {
                 return new ResponseEntity<>(ordine, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(new ResponseMessage("Errore nel checkout"), HttpStatus.BAD_REQUEST);
             }
-
-        } catch(UnauthorizedAccessException u){
-            return new ResponseEntity<>(new ResponseMessage("Utente non autorizzato"), HttpStatus.UNAUTHORIZED);
         }
         catch(QuantitaErrata q){
             return new ResponseEntity<>(new ResponseMessage("Quantita errata"), HttpStatus.BAD_REQUEST);
@@ -100,7 +88,6 @@ public class CartController {
             return new ResponseEntity<>(new ResponseMessage("Carrello vuoto"), HttpStatus.BAD_REQUEST);
         }
         catch (Exception e) {
-            e.printStackTrace();
             return new ResponseEntity<>(new ResponseMessage("Errore nel checkout"), HttpStatus.BAD_REQUEST);
         }
     }
