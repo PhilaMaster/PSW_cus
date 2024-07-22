@@ -2,13 +2,14 @@ package it.cus.psw_cus.services.shop;
 
 import it.cus.psw_cus.entities.Ordine;
 import it.cus.psw_cus.entities.Utente;
+import it.cus.psw_cus.repositories.UtenteRepository;
 import it.cus.psw_cus.repositories.shop.OrdineRepository;
+import it.cus.psw_cus.services.UtenteService;
 import it.cus.psw_cus.support.authentication.Utils;
 import it.cus.psw_cus.support.exceptions.OrdineNotFoundException;
-import it.cus.psw_cus.support.exceptions.UnauthorizedAccessException;
+import it.cus.psw_cus.support.exceptions.UserNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -19,10 +20,12 @@ import java.util.Optional;
 public class OrdineService {
 
     private final OrdineRepository ordineRepository;
+    private final UtenteRepository utenteRepository;
 
     @Autowired
-    public OrdineService(OrdineRepository ordineRepository) {
+    public OrdineService(OrdineRepository ordineRepository, UtenteRepository utenteRepository) {
         this.ordineRepository = ordineRepository;
+        this.utenteRepository = utenteRepository;
     }
 
     @Transactional
@@ -48,9 +51,9 @@ public class OrdineService {
 
 
     @Transactional
-    public Optional<Ordine> trovaOrdinePerUtente(Utente utente) throws OrdineNotFoundException, UnauthorizedAccessException {
-        if (utente.getId() != Utils.getId()) throw new UnauthorizedAccessException();
-        return ordineRepository.findByUtente(utente);
+    public Optional<Ordine> trovaOrdinePerUtente(int id) throws OrdineNotFoundException, UserNotFoundException {
+        Utente u = utenteRepository.findById(id).orElseThrow(UserNotFoundException::new);
+        return ordineRepository.findByUtente(u);
     }
 
 }

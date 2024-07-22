@@ -12,9 +12,10 @@ import java.util.Optional;
 @Repository
 public interface OrdineRepository extends JpaRepository<Ordine,Integer> {
 
-    Optional<Ordine> findByUtente(Utente utente);
 
     List<Ordine> findByDataCreazioneBetween(Date startDate, Date endDate);
 
     List<Ordine> findAll();
+
+    Optional<Ordine> findByUtente(Utente utente);
 }

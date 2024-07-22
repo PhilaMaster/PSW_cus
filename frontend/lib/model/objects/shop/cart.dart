@@ -87,9 +87,9 @@ class CartService {
     }
   }
 
-  Future<Ordine> checkout(int utenteId) async {
+  Future<Ordine> checkout(Cart c) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/$utenteId/checkout'),
+      Uri.parse('$baseUrl/checkout'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer ${Authenticator().getToken()}'

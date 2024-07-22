@@ -8,8 +8,6 @@ import '../../../model/objects/utente.dart';
 import '../../widgets/app_bar.dart';
 
 
-//tasto aggiungi al carrello, pagina visualizzazione ordini, metodo collana
-//tasto checkout
 
 class Shop extends StatefulWidget {
   const Shop({super.key});

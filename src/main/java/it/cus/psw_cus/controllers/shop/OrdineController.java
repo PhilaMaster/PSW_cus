@@ -5,6 +5,7 @@ import it.cus.psw_cus.entities.Utente;
 import it.cus.psw_cus.services.UtenteService;
 import it.cus.psw_cus.services.shop.OrdineService;
 import it.cus.psw_cus.support.ResponseMessage;
+import it.cus.psw_cus.support.authentication.Utils;
 import it.cus.psw_cus.support.exceptions.OrdineNotFoundException;
 import it.cus.psw_cus.support.exceptions.UnauthorizedAccessException;
 import it.cus.psw_cus.support.exceptions.UserNotFoundException;
@@ -63,18 +64,16 @@ public class OrdineController {
     }
 
     @PreAuthorize("hasRole('utente')")
-    @GetMapping("/{utenteId}")
-    public ResponseEntity<?> trovaOrdinePerUtente(@PathVariable int utenteId) {
+    @GetMapping("/ordiniUtente")
+    public ResponseEntity<?> trovaOrdinePerUtente() {
         try {
-            Utente utente = utenteService.cercaUtente(utenteId);
-            Optional<Ordine> ordine = ordineService.trovaOrdinePerUtente(utente);
+            Utente utente = utenteService.cercaUtente(Utils.getId());
+            Optional<Ordine> ordine = ordineService.trovaOrdinePerUtente(Utils.getId());
             if (ordine.isPresent()) {
                 return new ResponseEntity<>(ordine.get(), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(new ResponseMessage("Ordine non trovato per l'utente"), HttpStatus.NOT_FOUND);
             }
-        } catch(UnauthorizedAccessException u){
-            return new ResponseEntity<>(new ResponseMessage("Utente non autorizzato"), HttpStatus.UNAUTHORIZED);
         }catch (UserNotFoundException e) {
             return new ResponseEntity<>(new ResponseMessage("Utente non trovato"), HttpStatus.NOT_FOUND);
         }
