@@ -24,7 +24,7 @@ class _CarrelloState extends State<Carrello> {
     super.initState();
     if (isLoggedIn) {
       user = utenteLoggato!;
-      _cartFuture = _cartService.getCart(user.id);
+      _cartFuture = _cartService.getCart();
     } else {
       _cartFuture = Future.error('Utente non loggato');
     }

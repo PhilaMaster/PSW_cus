@@ -40,14 +40,14 @@ public class CartService {
     }
 
     @Transactional
-    public void addProdotto(Utente utente, ProdottoCarrelloDTO prodottoCarrelloDTO) throws QuantitaErrata, UserNotFoundException, ProdottoNotFoundException {
+    public void addProdotto(ProdottoCarrelloDTO prodottoCarrelloDTO) throws QuantitaErrata, UserNotFoundException, ProdottoNotFoundException {
         Utente u = utenteRepository.findById(Utils.getId()).orElseThrow(UserNotFoundException::new);
         if (prodottoCarrelloDTO.quantita() <= 0) throw new QuantitaErrata("Quantità non valida");
 
         Cart cart = cartRepository.findByUtente(u);
         if (cart == null) {
             cart = new Cart();
-            cart.setUtente(utente);
+            cart.setUtente(u);
         }
 
 

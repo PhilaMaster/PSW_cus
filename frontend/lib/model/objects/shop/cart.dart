@@ -4,6 +4,28 @@ import '../authenticator.dart';
 import 'ordine.dart';
 import 'prodotto.dart';
 
+class ProdottoCarrelloDTO {
+  final int idProdotto;
+  final int quantita;
+
+  ProdottoCarrelloDTO({
+    required this.idProdotto,
+    required this.quantita,
+  });
+
+  factory ProdottoCarrelloDTO.fromJson(Map<String, dynamic> json) {
+    return ProdottoCarrelloDTO(
+      idProdotto: json['idProdotto'],
+      quantita: json['quantita'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'idProdotto': idProdotto,
+    'quantita': quantita,
+  };
+}
+
 class ProdottoCarrello {
   final Prodotto prodotto;
   final int quantita;
@@ -47,8 +69,11 @@ class Cart {
 class CartService {
   final String baseUrl = 'http://localhost:8080/api/cart';
 
-  Future<Cart> getCart(int utenteId) async {
-    final response = await http.get(Uri.parse('$baseUrl/$utenteId'), headers:{'Authorization': 'Bearer ${Authenticator().getToken()}'});
+  Future<Cart> getCart() async {
+    final response = await http.get(
+      Uri.parse(baseUrl),
+      headers: {'Authorization': 'Bearer ${Authenticator().getToken()}'},
+    );
 
     if (response.statusCode == 200) {
       return Cart.fromJson(json.decode(response.body));
@@ -59,13 +84,14 @@ class CartService {
     }
   }
 
-  Future<void> addProdotto(int utenteId, ProdottoCarrello prodottoCarrello) async {
+  Future<void> addProdotto(ProdottoCarrelloDTO prodottoCarrelloDTO) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/$utenteId/add'),
+      Uri.parse('$baseUrl/add'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer ${Authenticator().getToken()}',
       },
-      body: json.encode(prodottoCarrello.toJson()),
+      body: json.encode(prodottoCarrelloDTO.toJson()),
     );
 
     if (response.statusCode != 200) {
@@ -73,13 +99,14 @@ class CartService {
     }
   }
 
-  Future<void> removeProdotto(int utenteId, ProdottoCarrello prodottoCarrello) async {
+  Future<void> removeProdotto(ProdottoCarrelloDTO prodottoCarrelloDTO) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/$utenteId/remove'),
+      Uri.parse('$baseUrl/remove'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer ${Authenticator().getToken()}',
       },
-      body: json.encode(prodottoCarrello.toJson()),
+      body: json.encode(prodottoCarrelloDTO.toJson()),
     );
 
     if (response.statusCode != 200) {
@@ -92,8 +119,9 @@ class CartService {
       Uri.parse('$baseUrl/checkout'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer ${Authenticator().getToken()}'
+        'Authorization': 'Bearer ${Authenticator().getToken()}',
       },
+      body: json.encode(c.toJson()),
     );
 
     if (response.statusCode == 200) {

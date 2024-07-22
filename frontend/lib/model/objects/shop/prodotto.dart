@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class Prodotto {
+  final int id;
   final String nome;
   final double prezzo;
   final String categoria;
@@ -11,6 +12,7 @@ class Prodotto {
   final String immagine;
 
   Prodotto({
+    required this.id,
     required this.nome,
     required this.prezzo,
     required this.categoria,
@@ -21,6 +23,7 @@ class Prodotto {
 
   factory Prodotto.fromJson(Map<String, dynamic> json) {
     return Prodotto(
+      id: json['id'],
       nome: json['nome'],
       prezzo: json['prezzo'],
       categoria: json['categoria'],

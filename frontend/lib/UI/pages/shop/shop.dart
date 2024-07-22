@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/model/objects/shop/cart.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import '../../../model/objects/authenticator.dart';
+import '../../../model/objects/shop/cart.dart';
 import '../../../model/objects/shop/prodotto.dart';
+import '../../../model/objects/authenticator.dart';
 import '../../../model/objects/utente.dart';
 import '../../widgets/app_bar.dart';
-
-
 
 class Shop extends StatefulWidget {
   const Shop({super.key});
@@ -90,10 +86,27 @@ class _ShopState extends State<Shop> {
     });
   }
 
+  Future<void> _addToCart(Prodotto prodotto, int quantity) async {
+    try {
+      final prodottoCarrelloDTO = ProdottoCarrelloDTO(
+        idProdotto: prodotto.id, // Assuming Prodotto has an 'id' field
+        quantita: quantity,
+      );
+      await CartService().addProdotto(prodottoCarrelloDTO);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Prodotto aggiunto al carrello')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Errore: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MyAppBar(onBackFromSuccessivePage: null,),
+      appBar: const MyAppBar(onBackFromSuccessivePage: null),
       body: Column(
         children: <Widget>[
           const SizedBox(height: 20.0),
@@ -175,8 +188,8 @@ class _ShopState extends State<Shop> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Image.asset(prodotto.immagine, width: 220, height: 220,),
-                              const SizedBox(width: 20,),
+                              Image.asset(prodotto.immagine, width: 220, height: 220),
+                              const SizedBox(width: 20),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,7 +207,7 @@ class _ShopState extends State<Shop> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(width: 20,),
+                              const SizedBox(width: 20),
                               Column(
                                 children: [
                                   Row(
@@ -220,15 +233,11 @@ class _ShopState extends State<Shop> {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 20,),
+                                  const SizedBox(height: 20),
                                   ElevatedButton(
                                     onPressed: () {
                                       if (_quantities[index] != null && _quantities[index]! > 0) {
-                                        ProdottoCarrello p = ProdottoCarrello(
-                                          prodotto: prodotto,
-                                          quantita: _quantities[index]!,
-                                        );
-                                        CartService().addProdotto(user.id, p);
+                                        _addToCart(prodotto, _quantities[index]!);
                                       }
                                     },
                                     style: ElevatedButton.styleFrom(

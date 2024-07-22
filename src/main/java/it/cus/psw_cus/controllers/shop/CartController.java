@@ -46,7 +46,7 @@ public class CartController {
     public ResponseEntity<?> addProdotto(@RequestBody @Valid ProdottoCarrelloDTO prodottoCarrelloDTO) {
         try {
             Utente utente = utenteService.cercaUtente(Utils.getId());
-            cartService.addProdotto(utente, prodottoCarrelloDTO);
+            cartService.addProdotto(prodottoCarrelloDTO);
             return new ResponseEntity<>(new ResponseMessage("Prodotto aggiunto al carrello"), HttpStatus.OK);
         } catch (ProdottoNotFoundException e) {
             return new ResponseEntity<>(new ResponseMessage("Prodotto non trovato"), HttpStatus.NOT_FOUND);
