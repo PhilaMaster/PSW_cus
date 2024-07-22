@@ -7,6 +7,10 @@ import '../../../model/objects/shop/prodotto.dart';
 import '../../../model/objects/utente.dart';
 import '../../widgets/app_bar.dart';
 
+
+//tasto aggiungi al carrello, pagina visualizzazione ordini, metodo collana
+//tasto checkout
+
 class Shop extends StatefulWidget {
   const Shop({super.key});
 
@@ -23,16 +27,14 @@ class _ShopState extends State<Shop> {
   Map<int, int> _quantities = {};
   late Utente user;
 
-
   @override
   void initState() {
     super.initState();
     _allProdottiFuture = ProdottoService().getAllProdotti();
     _loadProdotti();
-    if(isLoggedIn){
+    if (isLoggedIn) {
       user = utenteLoggato!;
     }
-
   }
 
   Future<void> _loadProdotti() async {
@@ -175,8 +177,8 @@ class _ShopState extends State<Shop> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                             Image.asset(prodotto.immagine,width: 220,height: 220,),
-                              const SizedBox(width: 200,),
+                              Image.asset(prodotto.immagine, width: 220, height: 220,),
+                              const SizedBox(width: 20,),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -223,7 +225,13 @@ class _ShopState extends State<Shop> {
                                   const SizedBox(height: 20,),
                                   ElevatedButton(
                                     onPressed: () {
-                                      CartService().addProdotto(user.id, prodotto as ProdottoCarrello);
+                                      if (_quantities[index] != null && _quantities[index]! > 0) {
+                                        ProdottoCarrello p = ProdottoCarrello(
+                                          prodotto: prodotto,
+                                          quantita: _quantities[index]!,
+                                        );
+                                        CartService().addProdotto(user.id, p);
+                                      }
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.white,

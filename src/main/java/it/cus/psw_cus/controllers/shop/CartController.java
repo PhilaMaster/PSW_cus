@@ -57,6 +57,7 @@ public class CartController {
         } catch(UnauthorizedAccessException u){
             return new ResponseEntity<>(new ResponseMessage("Utente non autorizzato"), HttpStatus.UNAUTHORIZED);
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>(new ResponseMessage("Errore nell'aggiunta del prodotto al carrello"), HttpStatus.BAD_REQUEST);
         }
     }
@@ -81,6 +82,7 @@ public class CartController {
     public ResponseEntity<?> checkout(@PathVariable int utenteId) {
         try {
             Utente utente = utenteService.cercaUtente(utenteId);
+
             Ordine ordine = cartService.checkout(utente);
             if (ordine != null) {
                 return new ResponseEntity<>(ordine, HttpStatus.OK);
@@ -98,6 +100,7 @@ public class CartController {
             return new ResponseEntity<>(new ResponseMessage("Carrello vuoto"), HttpStatus.BAD_REQUEST);
         }
         catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>(new ResponseMessage("Errore nel checkout"), HttpStatus.BAD_REQUEST);
         }
     }

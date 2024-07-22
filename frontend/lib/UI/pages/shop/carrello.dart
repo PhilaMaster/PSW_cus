@@ -24,6 +24,9 @@ class _CarrelloState extends State<Carrello> {
     if (isLoggedIn) {
       user = utenteLoggato!;
       _cartFuture = _cartService.getCart(user.id);
+    } else {
+      // Gestione caso non loggato
+      _cartFuture = Future.error('Utente non loggato');
     }
   }
 
@@ -113,8 +116,8 @@ class _CarrelloState extends State<Carrello> {
             child: ElevatedButton(
               onPressed: _checkout,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white, // Sfondo bianco
-                iconColor: Colors.black, // Testo nero
+                backgroundColor: Colors.white,
+                iconColor: Colors.black,
               ),
               child: const Text('Checkout'),
             ),

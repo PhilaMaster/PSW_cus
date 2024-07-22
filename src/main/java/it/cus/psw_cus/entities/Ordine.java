@@ -35,7 +35,7 @@ public class Ordine {
     private Utente utente;
 
     @OneToMany(mappedBy = "ordine", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ProdottoCarrello> prodotti = new HashSet<>();
+    private Set<ProdottoOrdine> prodotti = new HashSet<>();
 
 
 }

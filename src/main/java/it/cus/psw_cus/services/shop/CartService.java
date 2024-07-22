@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 @Service
@@ -70,19 +71,23 @@ public class CartService {
         if (cart == null || cart.getProdotti().isEmpty()) throw new EmptyCart("Il carrello è vuoto");
 
         Ordine ordine = new Ordine();
+
         ordine.setDataCreazione(new Date());
         ordine.setUtente(utente);
 
         double prezzoTotale = 0.0;
 
-        Set<ProdottoCarrello> prodottiOrdine = new HashSet<>();
+        Set<ProdottoOrdine> prodottiOrdine = new HashSet<>();
         for (ProdottoCarrello prodottoCarrello : cart.getProdotti()) {
             Prodotto prodotto = prodottoCarrello.getProdotto();
             if (prodottoCarrello.getQuantita() <= 0) throw new QuantitaErrata("Quantità non valida");
             if (prodottoCarrello.getQuantita() > prodotto.getDisponibilita()) {
                 throw new QuantitaErrata("Quantità richiesta superiore alla disponibilità del prodotto: " + prodotto.getNome());
             }
-            prodottiOrdine.add(prodottoCarrello);
+            ProdottoOrdine p = new ProdottoOrdine();
+            p.setProdottoCarrello(prodottoCarrello);
+            p.setOrdine(ordine);
+            prodottiOrdine.add(p);
             prezzoTotale += prodottoCarrello.getQuantita() * prodotto.getPrezzo();
 
             prodotto.setDisponibilita(prodotto.getDisponibilita() - prodottoCarrello.getQuantita());
@@ -94,8 +99,11 @@ public class CartService {
 
         ordineRepository.save(ordine);
 
+        cart.setProdotti(new HashSet<ProdottoCarrello>());
         cart.getProdotti().clear();
         cartRepository.save(cart);
+
+        System.out.println("Svuotato");
 
         return ordine;
     }

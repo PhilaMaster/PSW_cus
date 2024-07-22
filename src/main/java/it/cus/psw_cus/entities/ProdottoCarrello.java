@@ -12,8 +12,8 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode
-@Table( name = "prodottoCarrello",schema = "dbprova")
+@EqualsAndHashCode(exclude = "cart")
+@Table( name = "prodotto_carrello",schema = "dbprova")
 public class ProdottoCarrello {
 
     @Id
@@ -25,6 +25,7 @@ public class ProdottoCarrello {
     private int quantita;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "carrello_id")
     private Cart cart;
 
@@ -32,8 +33,6 @@ public class ProdottoCarrello {
     @JoinColumn(name = "prodotto_id")
     private Prodotto prodotto;
 
-    @ManyToOne
-    @JoinColumn(name = "ordine_id")
-    private Ordine ordine;
+
 
 }

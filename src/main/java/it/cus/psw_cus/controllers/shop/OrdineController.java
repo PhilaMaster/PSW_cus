@@ -30,7 +30,7 @@ public class OrdineController {
         this.utenteService = utenteService;
     }
 
-    @PreAuthorize("hasRole('user')")
+    @PreAuthorize("hasRole('utente')")
     @PostMapping
     public ResponseEntity<?> salvaOrdine(@RequestBody @Valid Ordine ordine) {
         Ordine savedOrdine = ordineService.salvaOrdine(ordine);
@@ -62,7 +62,7 @@ public class OrdineController {
         }
     }
 
-    @PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasRole('utente')")
     @GetMapping("/{utenteId}")
     public ResponseEntity<?> trovaOrdinePerUtente(@PathVariable int utenteId) {
         try {

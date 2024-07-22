@@ -92,6 +92,7 @@ class CartService {
       Uri.parse('$baseUrl/$utenteId/checkout'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer ${Authenticator().getToken()}'
       },
     );
 
