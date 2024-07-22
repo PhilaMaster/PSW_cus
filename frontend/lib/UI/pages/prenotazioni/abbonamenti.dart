@@ -21,7 +21,7 @@ class _AbbonamentiState extends State<Abbonamenti> {
   void initState() {
     super.initState();
     futurePacchetti = PacchettoService.getAllPacchetti();
-    futureAbbonamenti = AbbonamentoService.getAbbonamentiByUtenteWithPositiveRimanenti(utenteLoggato.id);
+    futureAbbonamenti = AbbonamentoService.getAbbonamentiByUtenteWithPositiveRimanenti();
   }
   @override
   Widget build(BuildContext context) {
@@ -154,7 +154,7 @@ class _AbbonamentiState extends State<Abbonamenti> {
                 Navigator.of(context).pop();
                 setState(() {
                   //aggiorno gli abbonamenti visualizzati nella pagina stessa
-                  futureAbbonamenti = AbbonamentoService.getAbbonamentiByUtenteWithPositiveRimanenti(utenteLoggato.id);
+                  futureAbbonamenti = AbbonamentoService.getAbbonamentiByUtenteWithPositiveRimanenti();
                 });
               },
               child: const Text('OK'),

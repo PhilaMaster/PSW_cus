@@ -26,14 +26,14 @@ class _HomePageState extends State<HomePage> {
     if(isLoggedIn){
       user = utenteLoggato!;
     }
-    futurePrenotazioni = PrenotazioneService.getPrenotazioniFutureUtente(user.id);
+    futurePrenotazioni = PrenotazioneService.getPrenotazioniFutureUtente();
   }
   void togglePrenotazioni() {
     setState(() {
       mostraPrenotazioniPassate = !mostraPrenotazioniPassate;
       futurePrenotazioni = !mostraPrenotazioniPassate
-          ? PrenotazioneService.getPrenotazioniFutureUtente(user.id)
-          : PrenotazioneService.getPrenotazioniUtente(user.id);
+          ? PrenotazioneService.getPrenotazioniFutureUtente()
+          : PrenotazioneService.getPrenotazioniUtente();
     });
   }
 
@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage> {
         //codice da eseguire quando da un'altra pagina torno indietro alla home
         setState(() {
           //aggiorno le prenotazioni future
-          futurePrenotazioni = PrenotazioneService.getPrenotazioniFutureUtente(user.id);
+          futurePrenotazioni = PrenotazioneService.getPrenotazioniFutureUtente();
           //aggiorno gli ingressi (non è richiesta l'esecuzione di altro codice ma basta il setState() stesso)
         });
       }),

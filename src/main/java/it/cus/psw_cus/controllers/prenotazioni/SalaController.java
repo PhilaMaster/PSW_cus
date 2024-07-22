@@ -22,12 +22,39 @@ import java.util.List;
 public class    SalaController {
     private final SalaService salaService;
     private final PrenotazioneService prenotazioneService;
-//    private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
     @Autowired
     public SalaController(SalaService salaService, PrenotazioneService prenotazioneService) {
         this.salaService = salaService;
         this.prenotazioneService = prenotazioneService;
+    }
+
+    @ExceptionHandler(SalaNotFoundException.class)
+    public ResponseEntity<String> handlePackageNotFoundException(SalaNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pacchetto non trovato");
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Sala>> getAll() {
+        return new ResponseEntity<>(salaService.getAllSale(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Sala> getById(@PathVariable int id) throws SalaNotFoundException {
+        return new ResponseEntity<>(salaService.getSalaById(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/postiOccupati")
+    public ResponseEntity<Integer> getPostiOccupati(@PathVariable int id,
+                                                    @RequestParam Prenotazione.FasciaOraria fasciaOraria,
+                                                    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date data) throws SalaNotFoundException {
+        Prenotazione p = new Prenotazione();
+        Sala s = new Sala();
+        s.setId(id);
+        p.setSala(s);
+        p.setFasciaOraria(fasciaOraria);
+        p.setData(data);
+        return new ResponseEntity<>(prenotazioneService.postiOccupati(p), HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('admin')")
@@ -48,48 +75,10 @@ public class    SalaController {
         return new ResponseEntity<>("Sala aggiornata con successo", HttpStatus.OK);
     }
 
-    @ExceptionHandler(SalaNotFoundException.class)
-    public ResponseEntity<String> handlePackageNotFoundException(SalaNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pacchetto non trovato");
-    }
-
-    @GetMapping
-    public ResponseEntity<List<Sala>> getAll() {
-        return new ResponseEntity<>(salaService.getAllSale(), HttpStatus.OK);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Sala> getById(@PathVariable int id) throws SalaNotFoundException {
-        return new ResponseEntity<>(salaService.getSalaById(id), HttpStatus.OK);
-    }
-
     @PreAuthorize("hasRole('admin')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable int id) throws SalaNotFoundException {
         salaService.deleteSala(id);
         return new ResponseEntity<>("Sala eliminata con successo", HttpStatus.OK);
-    }
-
-    //TODO rimuovere questo metodo o serve?
-//    @GetMapping("/{id}/disponibile")
-//    public ResponseEntity<Boolean> isDisponibile(@PathVariable int id,
-//                 @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date data,
-//                 @RequestParam("fascia_oraria") Prenotazione.FasciaOraria fasciaOraria) throws SalaNotFoundException {// forse qui va @enumeration
-//        return new ResponseEntity<>(salaService.isDisponibile(id,data,fasciaOraria), HttpStatus.OK);
-//    }
-
-    //@PreAuthorize("hasRole('utente')")
-    @GetMapping("/{id}/postiOccupati")
-    public ResponseEntity<Integer> getPostiOccupati(@PathVariable int id,
-                                                    @RequestParam Prenotazione.FasciaOraria fasciaOraria,
-                                                    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date data) throws SalaNotFoundException {
-        Prenotazione p = new Prenotazione();
-        Sala s = new Sala();
-        s.setId(id);
-        p.setSala(s);
-        p.setFasciaOraria(fasciaOraria);
-//        p.setData(formatter.parse(data));
-        p.setData(data);
-        return new ResponseEntity<>(prenotazioneService.postiOccupati(p), HttpStatus.OK);
     }
 }

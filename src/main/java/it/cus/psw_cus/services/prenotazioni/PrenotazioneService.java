@@ -41,25 +41,22 @@ public class PrenotazioneService {
     }
 
     @Transactional(readOnly = true)
-    public List<Prenotazione> getPrenotazioniUtente(int id) throws UserNotFoundException, UnauthorizedAccessException {
-        if(id!=Utils.getId()) throw new UnauthorizedAccessException();
-        Utente u = utenteRepository.findById(id).orElseThrow(UserNotFoundException::new);
+    public List<Prenotazione> getPrenotazioniUtente() throws UserNotFoundException {
+        Utente u = utenteRepository.findById(Utils.getId()).orElseThrow(UserNotFoundException::new);
         return prenotazioneRepository.findByUtente(u);
     }
 
     @Transactional(readOnly = true)
-    public List<Prenotazione> getPrenotazioniUtenteDopoData(int id, Date data) throws UserNotFoundException, UnauthorizedAccessException {
-        if(id!=Utils.getId()) throw new UnauthorizedAccessException();
-        Utente u = utenteRepository.findById(id).orElseThrow(UserNotFoundException::new);
+    public List<Prenotazione> getPrenotazioniUtenteDopoData(Date data) throws UserNotFoundException {
+        Utente u = utenteRepository.findById(Utils.getId()).orElseThrow(UserNotFoundException::new);
         return prenotazioneRepository.findByUtenteAndDataAfter(u,data);
     }
 
     @Transactional(readOnly = true)
-    public List<Prenotazione> getPrenotazioniUtenteFuture(int id) throws UserNotFoundException, UnauthorizedAccessException {
-        if(id!=Utils.getId()) throw new UnauthorizedAccessException();
+    public List<Prenotazione> getPrenotazioniUtenteFuture() throws UserNotFoundException {
         LocalDate localDate = LocalDate.now().minusDays(1);//mostro tutte le prenotazioni comprese quelle della giornata odierna
         Date data = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        return getPrenotazioniUtenteDopoData(id, data);
+        return getPrenotazioniUtenteDopoData(data);
     }
 
     @Transactional(rollbackFor = Exception.class, noRollbackFor = {

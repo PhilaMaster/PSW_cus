@@ -84,8 +84,8 @@ class AbbonamentoService {
     }
   }
 
-  static Future<List<Abbonamento>> getAbbonamentiByUtente(int utenteId) async {
-    final response = await http.get(Uri.parse('$_baseUrl/utente/$utenteId'), headers: {'Authorization': 'Bearer ${Authenticator().getToken()}'});
+  static Future<List<Abbonamento>> getAbbonamentiByUtente() async {
+    final response = await http.get(Uri.parse('$_baseUrl/utente/'), headers: {'Authorization': 'Bearer ${Authenticator().getToken()}'});
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((abbonamento) => Abbonamento.fromJson(abbonamento)).toList();
@@ -95,12 +95,12 @@ class AbbonamentoService {
       throw Exception('404 - Non trovato');
     }
     else {
-      throw Exception('Impossibile caricare gli abbonamenti per l\'utente con id:$utenteId (Errore per debug:${response.statusCode})');
+      throw Exception('Impossibile caricare gli abbonamenti per l\'utente)');
     }
   }
 
-  static Future<List<Abbonamento>> getAbbonamentiByUtenteWithPositiveRimanenti(int utenteId) async {
-    final response = await http.get(Uri.parse('$_baseUrl/utente/$utenteId/coningressi'), headers: {'Authorization': 'Bearer ${Authenticator().getToken()}'});
+  static Future<List<Abbonamento>> getAbbonamentiByUtenteWithPositiveRimanenti() async {
+    final response = await http.get(Uri.parse('$_baseUrl/utente/coningressi'), headers: {'Authorization': 'Bearer ${Authenticator().getToken()}'});
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((abbonamento) => Abbonamento.fromJson(abbonamento)).toList();
@@ -109,7 +109,7 @@ class AbbonamentoService {
     }else if (response.statusCode == 404){
       throw Exception('Non trovato');
     } else {
-      throw Exception('Impossibile caricare gli abbonamenti con ingressi per l\'utente con id:$utenteId (Errore per debug:${response.statusCode})');
+      throw Exception('Impossibile caricare gli abbonamenti con ingressi per l\'utente');
     }
   }
 }

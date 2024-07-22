@@ -4,6 +4,7 @@ import it.cus.psw_cus.entities.Abbonamento;
 import it.cus.psw_cus.entities.Utente;
 import it.cus.psw_cus.services.prenotazioni.AbbonamentoService;
 import it.cus.psw_cus.services.UtenteService;
+import it.cus.psw_cus.support.authentication.Utils;
 import it.cus.psw_cus.support.exceptions.AbbonamentoMalformatoException;
 import it.cus.psw_cus.support.exceptions.AbbonamentoNotFoundException;
 import it.cus.psw_cus.support.exceptions.UnauthorizedAccessException;
@@ -30,18 +31,6 @@ public class AbbonamentoController {
         this.utenteService = utenteService;
     }
 
-    @PreAuthorize("hasRole('admin')")
-    @GetMapping
-    public List<Abbonamento> getAllAbbonamenti() {
-        return abbonamentoService.getAllAbbonamenti();
-    }
-
-    @PreAuthorize("hasRole('admin')")
-    @GetMapping("/{id}")
-    public ResponseEntity<Abbonamento> getAbbonamentoById(@PathVariable int id) throws AbbonamentoNotFoundException {
-        return new ResponseEntity<>(abbonamentoService.getAbbonamentoById(id), HttpStatus.OK);
-    }
-
     @ExceptionHandler(AbbonamentoNotFoundException.class)
     public ResponseEntity<String> handleAbbonamentoNotFoundException(AbbonamentoNotFoundException e) {
         return new ResponseEntity<>("Abbonamento non trovato",HttpStatus.NOT_FOUND);
@@ -64,10 +53,19 @@ public class AbbonamentoController {
         }
     }
 
-//    @PutMapping("/{id}")
-//    public ResponseEntity<Abbonamento> updateAbbonamento(@PathVariable int id, @RequestBody Abbonamento newAbbonamento) {
-//        return ResponseEntity.ok(abbonamentoService.updateAbbonamento(id, newAbbonamento));
-//    }
+    @PreAuthorize("hasRole('utente')")
+    @GetMapping("/utente")
+    public ResponseEntity<?> getAbbonamentiByUtente() throws UserNotFoundException {
+        Utente utente = utenteService.cercaUtente(Utils.getId());//prendo l'id dal token jwt
+        return new ResponseEntity<>(abbonamentoService.getAbbonamentiByUtente(utente), HttpStatus.OK);//se non ce ne sono restituisce lista vuota
+    }
+
+    @PreAuthorize("hasRole('utente')")
+    @GetMapping("/utente/coningressi")
+    public ResponseEntity<?> getAbbonamentiByUtenteWithPositiveRimanenti() throws UserNotFoundException {
+        Utente utente = utenteService.cercaUtente(Utils.getId());
+        return new ResponseEntity<>(abbonamentoService.getAbbonamentiUtenteConIngressi(utente), HttpStatus.OK);
+    }
 
     @PreAuthorize("hasRole('admin')")
     @DeleteMapping("/{id}")
@@ -76,25 +74,15 @@ public class AbbonamentoController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('utente')")
-    @GetMapping("/utente/{utenteId}")
-    public ResponseEntity<?> getAbbonamentiByUtente(@PathVariable int utenteId) throws UserNotFoundException {
-        try {
-            Utente utente = utenteService.cercaUtente(utenteId);
-            return new ResponseEntity<>(abbonamentoService.getAbbonamentiByUtente(utente), HttpStatus.OK);
-        } catch (UnauthorizedAccessException e) {
-            return new ResponseEntity<>("Ricerca non autorizzata", HttpStatus.UNAUTHORIZED);
-        }
+    @PreAuthorize("hasRole('admin')")
+    @GetMapping
+    public List<Abbonamento> getAllAbbonamenti() {
+        return abbonamentoService.getAllAbbonamenti();
     }
 
-    @PreAuthorize("hasRole('utente')")
-    @GetMapping("/utente/{utenteId}/coningressi")
-    public ResponseEntity<?> getAbbonamentiByUtenteWithPositiveRimanenti(@PathVariable int utenteId) throws UserNotFoundException {
-        try {
-            Utente utente = utenteService.cercaUtente(utenteId);
-            return new ResponseEntity<>(abbonamentoService.getAbbonamentiUtenteConIngressi(utente), HttpStatus.OK);
-        } catch (UnauthorizedAccessException e) {
-            return new ResponseEntity<>("Ricerca non autorizzata", HttpStatus.UNAUTHORIZED);
-        }
+    @PreAuthorize("hasRole('admin')")
+    @GetMapping("/{id}")
+    public ResponseEntity<Abbonamento> getAbbonamentoById(@PathVariable int id) throws AbbonamentoNotFoundException {
+        return new ResponseEntity<>(abbonamentoService.getAbbonamentoById(id), HttpStatus.OK);
     }
 }

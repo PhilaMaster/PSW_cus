@@ -24,25 +24,6 @@ public class PacchettoController {
         this.pacchettoService = pacchettoService;
     }
 
-    @PreAuthorize("hasRole('admin')")
-    @PostMapping
-    public ResponseEntity<?> create(@RequestBody @Valid Pacchetto pacchetto) {
-        try {
-            Pacchetto ret = pacchettoService.createPacchetto(pacchetto);
-            return new ResponseEntity<>(ret, HttpStatus.CREATED);
-        } catch (PackageAlreadyExistsException e) {
-            return new ResponseEntity<>("Pacchetto già esistente", HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @PreAuthorize("hasRole('admin')")
-    @PutMapping
-    public ResponseEntity<String> update(@RequestBody @Valid Pacchetto pacchetto) throws PackageNotFoundException {
-        pacchettoService.updatePacchetto(pacchetto.getIngressi(),pacchetto);
-        return new ResponseEntity<>("Pacchetto aggiornato con successo", HttpStatus.OK);
-    }
-
-
     @GetMapping
     public ResponseEntity<List<Pacchetto>> getAll() {
         return new ResponseEntity<>(pacchettoService.getAllPacchetti(),HttpStatus.OK);
@@ -77,4 +58,25 @@ public class PacchettoController {
         pacchettoService.deletePacchetto(ingressi);
         return new ResponseEntity<>("Pacchetto eliminato con successo", HttpStatus.OK);
     }
+
+
+    @PreAuthorize("hasRole('admin')")
+    @PostMapping
+    public ResponseEntity<?> create(@RequestBody @Valid Pacchetto pacchetto) {
+        try {
+            Pacchetto ret = pacchettoService.createPacchetto(pacchetto);
+            return new ResponseEntity<>(ret, HttpStatus.CREATED);
+        } catch (PackageAlreadyExistsException e) {
+            return new ResponseEntity<>("Pacchetto già esistente", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PreAuthorize("hasRole('admin')")
+    @PutMapping
+    public ResponseEntity<String> update(@RequestBody @Valid Pacchetto pacchetto) throws PackageNotFoundException {
+        pacchettoService.updatePacchetto(pacchetto.getIngressi(),pacchetto);
+        return new ResponseEntity<>("Pacchetto aggiornato con successo", HttpStatus.OK);
+    }
+
+
 }

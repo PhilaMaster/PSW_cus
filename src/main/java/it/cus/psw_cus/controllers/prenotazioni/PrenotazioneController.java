@@ -2,6 +2,7 @@ package it.cus.psw_cus.controllers.prenotazioni;
 
 import it.cus.psw_cus.entities.Prenotazione;
 import it.cus.psw_cus.services.prenotazioni.PrenotazioneService;
+import it.cus.psw_cus.support.authentication.Utils;
 import it.cus.psw_cus.support.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,33 +44,31 @@ public class PrenotazioneController {
         }
     }
 
+
+    @PreAuthorize("hasRole('utente')")
+    @GetMapping("/utente/future")
+    public ResponseEntity<?> getFutureUtente(){
+        try{
+            return new ResponseEntity<>(prenotazioneService.getPrenotazioniUtenteFuture(),HttpStatus.OK);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>("Utente non trovato",HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PreAuthorize("hasRole('utente')")
+    @GetMapping("/utente")
+    public ResponseEntity<?> getAllUtente(){
+        try{
+            return new ResponseEntity<>(prenotazioneService.getPrenotazioniUtente(),HttpStatus.OK);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>("Utente non trovato",HttpStatus.NOT_FOUND);
+        }
+    }
+
     @PreAuthorize("hasRole('admin')")
     @GetMapping
     public List<Prenotazione> getAll() {
         return prenotazioneService.findAll();
     }
 
-    @PreAuthorize("hasRole('utente')")
-    @GetMapping("/utente/future/{idUtente}")
-    public ResponseEntity<?> getFutureUtente(@PathVariable int idUtente){
-        try{
-            return new ResponseEntity<>(prenotazioneService.getPrenotazioniUtenteFuture(idUtente),HttpStatus.OK);
-        } catch (UserNotFoundException e) {
-            return new ResponseEntity<>("Utente non trovato",HttpStatus.NOT_FOUND);
-        } catch (UnauthorizedAccessException e) {
-            return new ResponseEntity<>("Accesso non autorizzato", HttpStatus.UNAUTHORIZED);
-        }
-    }
-
-    @PreAuthorize("hasRole('utente')")
-    @GetMapping("/utente/{idUtente}")
-    public ResponseEntity<?> getAllUtente(@PathVariable int idUtente){
-        try{
-            return new ResponseEntity<>(prenotazioneService.getPrenotazioniUtente(idUtente),HttpStatus.OK);
-        } catch (UserNotFoundException e) {
-            return new ResponseEntity<>("Utente non trovato",HttpStatus.NOT_FOUND);
-        }catch (UnauthorizedAccessException e) {
-            return new ResponseEntity<>("Accesso non autorizzato", HttpStatus.UNAUTHORIZED);
-        }
-    }
 }

@@ -48,14 +48,12 @@ public class AbbonamentoService {
     }
 
     @Transactional(readOnly = true)
-    public List<Abbonamento> getAbbonamentiByUtente(Utente utente) throws UnauthorizedAccessException {
-        if(utente.getId()!=Utils.getId()) throw new UnauthorizedAccessException();
+    public List<Abbonamento> getAbbonamentiByUtente(Utente utente) {
         return abbonamentoRepository.findByUtente(utente);
     }
 
     @Transactional(readOnly = true)
-    public List<Abbonamento> getAbbonamentiUtenteConIngressi(Utente utente) throws UnauthorizedAccessException {
-        if(utente.getId()!=Utils.getId()) throw new UnauthorizedAccessException();
+    public List<Abbonamento> getAbbonamentiUtenteConIngressi(Utente utente) {
         return abbonamentoRepository.findByUtenteAndRimanentiGreaterThanZero(utente);
     }
 

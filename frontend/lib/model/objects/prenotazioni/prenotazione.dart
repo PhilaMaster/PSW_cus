@@ -131,23 +131,23 @@ class PrenotazioneService {
     }
   }
 
-  static Future<List<Prenotazione>> getPrenotazioniFutureUtente(int idUtente) async {
-    final response = await http.get(Uri.parse('$baseUrl/utente/future/$idUtente'), headers: {'Authorization': 'Bearer ${Authenticator().getToken()}'});
+  static Future<List<Prenotazione>> getPrenotazioniFutureUtente() async {
+    final response = await http.get(Uri.parse('$baseUrl/utente/future'), headers: {'Authorization': 'Bearer ${Authenticator().getToken()}'});
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((prenotazione) => Prenotazione.fromJson(prenotazione)).toList();
     } else {
-      throw Exception('Impossibile caricare prenotazioni future per l\'utente $idUtente');
+      throw Exception('Impossibile caricare prenotazioni future per l\'utente');
     }
   }
 
-  static Future<List<Prenotazione>> getPrenotazioniUtente(int idUtente) async {
-    final response = await http.get(Uri.parse('$baseUrl/utente/$idUtente'), headers: {'Authorization': 'Bearer ${Authenticator().getToken()}'});
+  static Future<List<Prenotazione>> getPrenotazioniUtente() async {
+    final response = await http.get(Uri.parse('$baseUrl/utente'), headers: {'Authorization': 'Bearer ${Authenticator().getToken()}'});
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((prenotazione) => Prenotazione.fromJson(prenotazione)).toList();
     } else {
-      throw Exception('Impossibile caricare prenotazioni future per l\'utente $idUtente');
+      throw Exception('Impossibile caricare prenotazioni future per l\'utente');
     }
   }
 
