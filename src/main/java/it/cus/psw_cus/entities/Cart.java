@@ -23,12 +23,12 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToOne(fetch = FetchType.EAGER) //consente di prendere i dati solo quando realmente necessario
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "utente_id")
     private Utente utente;
 
     @Column(name = "prodotto")
-    @OneToMany(mappedBy = "cart", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "cart", fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     private Set<ProdottoCarrello> prodotti = new HashSet<>();
 
     @Version

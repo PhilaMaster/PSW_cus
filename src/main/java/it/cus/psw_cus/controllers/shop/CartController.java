@@ -45,7 +45,6 @@ public class CartController {
     @PostMapping("/add")
     public ResponseEntity<?> addProdotto(@RequestBody @Valid ProdottoCarrelloDTO prodottoCarrelloDTO) {
         try {
-            Utente utente = utenteService.cercaUtente(Utils.getId());
             cartService.addProdotto(prodottoCarrelloDTO);
             return new ResponseEntity<>(new ResponseMessage("Prodotto aggiunto al carrello"), HttpStatus.OK);
         } catch (ProdottoNotFoundException e) {
@@ -75,7 +74,6 @@ public class CartController {
     @PostMapping("/checkout")
     public ResponseEntity<?> checkout(@RequestBody @Valid Cart cart) {
         try {
-            Utente utente = utenteService.cercaUtente(Utils.getId());
             Cart c = cartService.carrelloUtente();
             Ordine ordine = cartService.checkout(c);
             if (ordine != null) {
@@ -91,6 +89,7 @@ public class CartController {
             return new ResponseEntity<>(new ResponseMessage("Carrello vuoto"), HttpStatus.BAD_REQUEST);
         }
         catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>(new ResponseMessage("Errore nel checkout"), HttpStatus.BAD_REQUEST);
         }
     }

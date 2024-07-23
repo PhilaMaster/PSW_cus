@@ -12,7 +12,6 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString(exclude = "cart")
-@EqualsAndHashCode(exclude = "cart")
 @Table( name = "prodotto_carrello",schema = "dbprova")
 public class ProdottoCarrello {
 
@@ -34,5 +33,24 @@ public class ProdottoCarrello {
     private Prodotto prodotto;
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ProdottoCarrello that = (ProdottoCarrello) o;
+
+        if (quantita != that.quantita) return false;
+        if (!prodotto.equals(that.prodotto)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = prodotto.hashCode();
+        result = 31 * result + quantita;
+        return result;
+    }
 
 }

@@ -23,8 +23,11 @@ class _MieiOrdiniState extends State<MieiOrdini> {
     super.initState();
     if (isLoggedIn) {
       user = utenteLoggato!;
+      _ordiniFuture = OrdineService().trovaOrdinePerUtente(user.id);
+    } else {
+      // Handle the case where the user is not logged in
+      _ordiniFuture = Future.value([]);
     }
-    _ordiniFuture = OrdineService().trovaOrdinePerUtente(user.id);
   }
 
   Future<void> _filterOrdiniPerData(DateTimeRange dateRange) async {
@@ -87,12 +90,11 @@ class _MieiOrdiniState extends State<MieiOrdini> {
               future: _ordiniFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
+                  return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
-                  print('Errore: ${snapshot.error}');
-                  return Text('Errore: ${snapshot.error}');
+                  return Center(child: Text('Errore: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Text('Nessun ordine trovato');
+                  return const Center(child: Text('Nessun ordine trovato'));
                 } else {
                   return ListView.builder(
                     itemCount: snapshot.data!.length,
@@ -141,8 +143,7 @@ class _MieiOrdiniState extends State<MieiOrdini> {
                 }
               },
             ),
-          )
-
+          ),
         ],
       ),
     );

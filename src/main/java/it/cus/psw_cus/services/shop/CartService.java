@@ -2,9 +2,7 @@ package it.cus.psw_cus.services.shop;
 
 import it.cus.psw_cus.entities.*;
 import it.cus.psw_cus.repositories.UtenteRepository;
-import it.cus.psw_cus.repositories.shop.CartRepository;
-import it.cus.psw_cus.repositories.shop.OrdineRepository;
-import it.cus.psw_cus.repositories.shop.ProdottoRepository;
+import it.cus.psw_cus.repositories.shop.*;
 import it.cus.psw_cus.support.authentication.Utils;
 import it.cus.psw_cus.support.exceptions.*;
 import jakarta.transaction.Transactional;
@@ -12,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class CartService {
@@ -26,7 +21,7 @@ public class CartService {
     private final UtenteRepository utenteRepository;
 
     @Autowired
-    public CartService(CartRepository cartRepository, OrdineRepository ordineRepository, ProdottoRepository prodottoRepository, TaskExecutionAutoConfiguration taskExecutionAutoConfiguration, UtenteRepository utenteRepository) {
+    public CartService(CartRepository cartRepository, OrdineRepository ordineRepository, ProdottoRepository prodottoRepository, UtenteRepository utenteRepository) {
         this.cartRepository = cartRepository;
         this.ordineRepository = ordineRepository;
         this.prodottoRepository = prodottoRepository;
@@ -50,7 +45,6 @@ public class CartService {
             cart.setUtente(u);
         }
 
-
         Prodotto pr = prodottoRepository.findById(prodottoCarrelloDTO.idProdotto()).orElseThrow(ProdottoNotFoundException::new);
         boolean presente = false;
         Set<ProdottoCarrello> prodottiCarrello =  cart.getProdotti();
@@ -73,6 +67,22 @@ public class CartService {
         cartRepository.save(cart);
     }
 
+    /*
+    @Transactional
+    public void rimuoviProdotto(ProdottoCarrelloDTO prodottoCarrelloDTO) throws UserNotFoundException, ProdottoNotFoundException, CartNotFound {
+        int userId = Utils.getId();
+        System.out.println("User ID: " + userId);
+        Utente u = utenteRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        Cart cart = cartRepository.findByUtente(u);
+        if (cart == null) {
+            throw new CartNotFound("Carrello non trovato per l'utente: " + userId);
+        }
+        ProdottoCarrello p = prodottoCarrelloRepository.findByCart_IdAndProdotto_Id(cart.getId(), prodottoCarrelloDTO.idProdotto());
+
+        prodottoCarrelloRepository.delete(p);
+        cartRepository.save(cart);
+    }*/
+
     @Transactional
     public void rimuoviProdotto(ProdottoCarrelloDTO prodottoCarrelloDTO) throws UserNotFoundException, ProdottoNotFoundException {
         Utente u = utenteRepository.findById(Utils.getId()).orElseThrow(UserNotFoundException::new);
@@ -80,24 +90,28 @@ public class CartService {
         Set<ProdottoCarrello> prodottiCarrello = cart.getProdotti();
         Prodotto p = prodottoRepository.findById(prodottoCarrelloDTO.idProdotto()).orElseThrow(ProdottoNotFoundException::new);
         System.out.println(p);
-        for(ProdottoCarrello pc : prodottiCarrello){
-            System.out.println("pc:"+pc.getProdotto());
-            if(pc.getProdotto().equals(p)){
-                prodottiCarrello.remove(pc);
+
+        Iterator<ProdottoCarrello> iterator = prodottiCarrello.iterator();
+        while (iterator.hasNext()) {
+            ProdottoCarrello pc = iterator.next();
+            System.out.println("pc:" + pc.getProdotto());
+            if (pc.getProdotto().equals(p)) {
+                iterator.remove();
                 break;
             }
         }
         cartRepository.save(cart);
     }
 
-    @Transactional(rollbackOn = {QuantitaErrata.class})
+
+    @Transactional(rollbackOn = Exception.class)
     public Ordine checkout(Cart c) throws QuantitaErrata, EmptyCart, SessionError, UserNotFoundException {
         Utente u = utenteRepository.findById(Utils.getId()).orElseThrow(UserNotFoundException::new);
         Cart cart = cartRepository.findByUtente(u);
         if (cart == null || cart.getProdotti().isEmpty()) throw new EmptyCart("Il carrello è vuoto");
 
-        if(!cart.getProdotti().equals(c.getProdotti()))
-            throw new SessionError("Errore: refreshare la pagina");
+        //if(!cart.getProdotti().equals(c.getProdotti()))
+        //    throw new SessionError("Errore: refreshare la pagina");
 
         Ordine ordine = new Ordine();
 
@@ -108,20 +122,20 @@ public class CartService {
 
         Set<ProdottoOrdine> prodottiOrdine = new HashSet<>();
         for (ProdottoCarrello prodottoCarrello : cart.getProdotti()) {
-                Prodotto prodotto = prodottoCarrello.getProdotto();
-                if (prodottoCarrello.getQuantita() <= 0)
-                    throw new QuantitaErrata("Quantità non valida");
-                if (prodottoCarrello.getQuantita() > prodotto.getDisponibilita()) {
-                    throw new QuantitaErrata("Quantità richiesta superiore alla disponibilità del prodotto: " + prodotto.getNome());
-                }
-                ProdottoOrdine p = new ProdottoOrdine();
-                p.setProdottoCarrello(prodottoCarrello);
-                p.setOrdine(ordine);
-                prodottiOrdine.add(p);
-                prezzoTotale += prodottoCarrello.getQuantita() * prodotto.getPrezzo();
+            Prodotto prodotto = prodottoCarrello.getProdotto();
+            if (prodottoCarrello.getQuantita() <= 0)
+                throw new QuantitaErrata("Quantità non valida");
+            if (prodottoCarrello.getQuantita() > prodotto.getDisponibilita()) {
+                throw new QuantitaErrata("Quantità richiesta superiore alla disponibilità del prodotto: " + prodotto.getNome());
+            }
+            ProdottoOrdine p = new ProdottoOrdine();
+            p.setProdottoCarrello(prodottoCarrello);
+            p.setOrdine(ordine);
+            prodottiOrdine.add(p);
+            prezzoTotale += prodottoCarrello.getQuantita() * prodotto.getPrezzo();
 
-                prodotto.setDisponibilita(prodotto.getDisponibilita() - prodottoCarrello.getQuantita());
-                prodottoRepository.save(prodotto);
+            prodotto.setDisponibilita(prodotto.getDisponibilita() - prodottoCarrello.getQuantita());
+            prodottoRepository.save(prodotto);
 
         }
         ordine.setProdotti(prodottiOrdine);
@@ -137,5 +151,6 @@ public class CartService {
 
         return ordine;
     }
+
 }
 

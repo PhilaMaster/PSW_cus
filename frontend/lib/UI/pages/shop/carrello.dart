@@ -32,9 +32,17 @@ class _CarrelloState extends State<Carrello> {
 
   Future<void> _removeFromCart(ProdottoCarrelloDTO prodottoCarrelloDTO) async {
     try {
+      final cart = await _cartService.getCart();
+
+      final prodottoCarrelloToRemove = cart.prodotti.firstWhere(
+              (pc) => pc.prodotto.id == prodottoCarrelloDTO.idProdotto &&
+              pc.quantita == prodottoCarrelloDTO.quantita,
+          orElse: () => throw Exception('Prodotto non trovato nel carrello')
+      );
+
       await _cartService.removeProdotto(prodottoCarrelloDTO);
       setState(() {
-        _cartFuture = _cartService.getCart(); // Refresh the cart
+        _cartFuture = _cartService.getCart();
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
