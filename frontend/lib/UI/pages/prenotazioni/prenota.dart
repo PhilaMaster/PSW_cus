@@ -3,6 +3,7 @@ import 'package:frontend/model/objects/authenticator.dart';
 
 import '../../../model/objects/prenotazioni/prenotazione.dart';
 import '../../../model/objects/prenotazioni/sala.dart';
+import '../../widgets/app_bar.dart';
 import '../../widgets/textStyles.dart';
 
 
@@ -44,9 +45,8 @@ class _PrenotaState extends State<Prenota> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Nuova prenotazione'),
-        automaticallyImplyLeading: false,
+      appBar: const MyAppBar(
+        onBackFromSuccessivePage: null,
       ),
       body:SingleChildScrollView(
         child:Padding(
@@ -101,7 +101,7 @@ class _PrenotaState extends State<Prenota> {
                 children: [
                   Text("Seleziona il giorno della prenotazione", style: MediumTitleStyle()),
                   const Tooltip(
-                    message: "è possibile prenotare fino a un massimo di due giornate lavorative successiva alla data odierna (sabato e domenica la palestra è chiusa)",
+                    message: "è possibile prenotare i prossimi tre giorni lavorativi (sabato e domenica la palestra sarà chiusa)",
                     child: Icon(Icons.help_outline)
                   )
                 ],
@@ -188,10 +188,10 @@ class _PrenotaState extends State<Prenota> {
                           onTap: () async {
                             try{
                               if(_salaSelezionata==null){
-                                _showErrorDialog(context,"Seleziona prima una sala");
+                                _showErrorDialog(context,"Seleziona prima una sala",null);
                                 return;
                               }else if(utenteLoggato==null){
-                                _showErrorDialog(context,"Devi prima effettuare il login");
+                                _showErrorDialog(context,"Devi prima effettuare il login",() {Navigator.pushNamed(context,"/login");});
                                 return;
                               }
                               await PrenotazioneService.createPrenotazione(Prenotazione(id: -1, fasciaOraria: fascia, sala: _salaSelezionata!, utente: utenteLoggato!, data: dataSelezionata!));
@@ -203,18 +203,20 @@ class _PrenotaState extends State<Prenota> {
                               // Gestione specifica degli errori in base all'eccezione lanciata
                               if (e is Exception) {
                                 if (e.toString().contains('Utente non loggato')) {
-                                  _showErrorDialog(context,"Effettua il login per effettuare una prenotazione");
+                                  _showErrorDialog(context,"Effettua il login per effettuare una prenotazione",() {Navigator.pushNamed(context,"/login");});
                                 } else if (e.toString().contains('Prenotazione duplicata')) {
-                                  _showErrorDialog(context,"Prenotazione già esistente");
+                                  _showErrorDialog(context,"Prenotazione già esistente",null);
                                 } else if (e.toString().contains('Ingressi insufficienti')) {
-                                  _showErrorDialog(context,"Ingressi esauriti, acquistali nella sezione Abbonamenti");
+                                  _showErrorDialog(context,"Ingressi esauriti, acquistali nella sezione Abbonamenti",null);
                                 } else if (e.toString().contains('Sala al completo')) {
-                                  _showErrorDialog(context,"Sala al completo");
+                                  _showErrorDialog(context,"Sala al completo",(){setState(() {
+                                    aggiornaPostiOccupati();
+                                  });});
                                 }else {
-                                  _showErrorDialog(context,"Impossibile creare la prenotazione");
+                                  _showErrorDialog(context,"Impossibile creare la prenotazione",null);
                                 }
                               } else {
-                                _showErrorDialog(context,"Errore generico");
+                                _showErrorDialog(context,"Errore generico",null);
                               }
                             }
                           },
@@ -235,9 +237,10 @@ class _PrenotaState extends State<Prenota> {
 
   String estraiData(DateTime data) => data.toIso8601String().split('T')[0];
 
-  getDateDisponibili() {//è possibile prenotare per il giorno stesso o per i successivi due tranne sabato e domenica(palestra chiusa)
+  getDateDisponibili() {//è possibile prenotare per il giorno successivo o per i successivi due tranne sabato e domenica(palestra chiusa)
     List<DateTime> ret = [];
     DateTime now = DateTime.now();
+    DateTime data = now.add(const Duration(days: 1));
     int i=0;
     while (ret.length < 3) {
       DateTime data = now.add(Duration(days: i++));
@@ -269,7 +272,7 @@ class _PrenotaState extends State<Prenota> {
     );
   }
 
-  void _showErrorDialog(BuildContext context, String errore) {
+  void _showErrorDialog(BuildContext context, String errore, Function? f) {
     showDialog(
       context: context,
       builder: (context) {
@@ -280,6 +283,7 @@ class _PrenotaState extends State<Prenota> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
+                f?.call();
               },
               child: const Text('OK'),
             ),

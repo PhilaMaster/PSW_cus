@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            FutureBuilder(future: UtenteService.getIngressi(user.id),
+            FutureBuilder(future: UtenteService.getIngressi(),
                 builder: (context,snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator();

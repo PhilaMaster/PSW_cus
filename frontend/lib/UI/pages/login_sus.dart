@@ -47,7 +47,7 @@ class LoginSusState extends State<LoginSus> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MyAppBar(onBackFromSuccessivePage: null), // Usando l'AppBar personalizzata
+      appBar: null,
       body: Center(
 
         child:SizedBox(

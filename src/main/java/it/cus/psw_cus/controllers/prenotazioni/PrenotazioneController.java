@@ -37,10 +37,14 @@ public class PrenotazioneController {
             return new ResponseEntity<>("Prenotazione già esistente", HttpStatus.CONFLICT);
         } catch (UserNotFoundException e) {
             return new ResponseEntity<>("Utente non trovato", HttpStatus.NOT_FOUND);
-        } catch (UnauthorizedAccessException e) {
-            return new ResponseEntity<>("Accesso non autorizzato", HttpStatus.UNAUTHORIZED);
         } catch (InsufficientEntriesException e) {
             return new ResponseEntity<>("Ingressi insufficienti", HttpStatus.PRECONDITION_FAILED);
+        } catch (PrenotazioneNotValidException e) {
+//            if (e.getMessage().contains("Impossibile prenotare per una data passata"))
+            return new ResponseEntity<>("Impossibile prenotare per una data passata", HttpStatus.BAD_REQUEST);
+        } catch (Exception e){
+            e.printStackTrace();//stampo errore ma è visibile solo da backend, lo uso per debug
+            return new ResponseEntity<>("Errore generico", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

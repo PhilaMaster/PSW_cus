@@ -7,7 +7,7 @@ import it.cus.psw_cus.services.UtenteService;
 import it.cus.psw_cus.support.authentication.Utils;
 import it.cus.psw_cus.support.exceptions.AbbonamentoMalformatoException;
 import it.cus.psw_cus.support.exceptions.AbbonamentoNotFoundException;
-import it.cus.psw_cus.support.exceptions.UnauthorizedAccessException;
+import it.cus.psw_cus.support.exceptions.PackageNotFoundException;
 import it.cus.psw_cus.support.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -46,10 +46,10 @@ public class AbbonamentoController {
     public ResponseEntity<?> createAbbonamento(@RequestBody @Valid Abbonamento abbonamento) {
         try {
             return new ResponseEntity<>(abbonamentoService.createAbbonamento(abbonamento), HttpStatus.CREATED);
-        } catch (AbbonamentoMalformatoException e) {
-            return new ResponseEntity<>("Errore nell'acquisto, abbonamento malformato", HttpStatus.BAD_REQUEST);
-        } catch (UnauthorizedAccessException e) {
-            return new ResponseEntity<>("Acquisto non autorizzato", HttpStatus.UNAUTHORIZED);
+        } catch (PackageNotFoundException e) {
+            return new ResponseEntity<>("Pacchetto non trovato", HttpStatus.NOT_FOUND);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>("Utente non trovato", HttpStatus.NOT_FOUND);
         }
     }
 
