@@ -17,5 +17,5 @@ public interface OrdineRepository extends JpaRepository<Ordine,Integer> {
 
     List<Ordine> findAll();
 
-    Optional<Ordine> findByUtente(Utente utente);
+    List<Ordine> findByUtente(Utente utente);
 }

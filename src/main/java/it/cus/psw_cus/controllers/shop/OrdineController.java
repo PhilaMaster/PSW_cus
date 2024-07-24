@@ -67,16 +67,15 @@ public class OrdineController {
     @GetMapping("/ordiniUtente")
     public ResponseEntity<?> trovaOrdinePerUtente() {
         try {
-            Utente utente = utenteService.cercaUtente(Utils.getId());
-            Optional<Ordine> ordine = ordineService.trovaOrdinePerUtente(Utils.getId());
-            if (ordine.isPresent()) {
-                return new ResponseEntity<>(ordine.get(), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ResponseMessage("Ordine non trovato per l'utente"), HttpStatus.NOT_FOUND);
-            }
-        }catch (UserNotFoundException e) {
+            List<Ordine> ordine = ordineService.trovaOrdinePerUtente();
+            return new ResponseEntity<>(ordine, HttpStatus.OK);
+        } catch (OrdineNotFoundException e) {
+            return new ResponseEntity<>(new ResponseMessage("Ordine non trovato per l'utente"), HttpStatus.NOT_FOUND);
+        } catch (UserNotFoundException e) {
             return new ResponseEntity<>(new ResponseMessage("Utente non trovato"), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ResponseMessage("Errore ordini dell'utente"), HttpStatus.BAD_REQUEST);
         }
     }
-
 }

@@ -11,10 +11,12 @@ import java.util.List;
 @Repository
 public interface ProdottoCarrelloRepository extends JpaRepository<ProdottoCarrello, Integer> {
 
-    List<ProdottoCarrello> findByCart(Cart cart);
+//    List<ProdottoCarrello> findByCart(Cart cart);
+//
+//    @Query("SELECT pc FROM ProdottoCarrello pc WHERE pc.cart = ?1 AND pc.prodotto.id = ?2")
+//    ProdottoCarrello findByCartAndProdottoId(Cart cart, int prodottoId);
+//
+//    ProdottoCarrello findByCart_IdAndProdotto_Id(int id, int i);
 
-    @Query("SELECT pc FROM ProdottoCarrello pc WHERE pc.cart = ?1 AND pc.prodotto.id = ?2")
-    ProdottoCarrello findByCartAndProdottoId(Cart cart, int prodottoId);
-
-    ProdottoCarrello findByCart_IdAndProdotto_Id(int id, int i);
+    List<ProdottoCarrello> findByCartAndInCarrello(Cart cart, boolean inCarrello);
 }

@@ -32,6 +32,9 @@ public class ProdottoCarrello {
     @JoinColumn(name = "prodotto_id")
     private Prodotto prodotto;
 
+    @Basic
+    @Column(name = "in_carrello")
+    private boolean inCarrello;
 
     @Override
     public boolean equals(Object o) {

@@ -36,7 +36,7 @@ public class CartController {
             Cart cart = cartService.carrelloUtente();
             return new ResponseEntity<>(cart, HttpStatus.OK);
         }  catch (Exception e) {
-//            e.printStackTrace();
+            e.printStackTrace();
             return new ResponseEntity<>(new ResponseMessage("Errore generico"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -65,6 +65,9 @@ public class CartController {
         catch (ProdottoNotFoundException e){
             return new ResponseEntity<>(new ResponseMessage("Prodotto non trovato"), HttpStatus.NOT_FOUND);
         }
+        catch (IllegalStateException e){
+            return new ResponseEntity<>(new ResponseMessage("Stato inconsistente"), HttpStatus.BAD_REQUEST);
+        }
         catch (Exception e ) {
             return new ResponseEntity<>(new ResponseMessage("Errore nella rimozione del prodotto dal carrello"), HttpStatus.BAD_REQUEST);
         }
@@ -89,7 +92,6 @@ public class CartController {
             return new ResponseEntity<>(new ResponseMessage("Carrello vuoto"), HttpStatus.BAD_REQUEST);
         }
         catch (Exception e) {
-            e.printStackTrace();
             return new ResponseEntity<>(new ResponseMessage("Errore nel checkout"), HttpStatus.BAD_REQUEST);
         }
     }

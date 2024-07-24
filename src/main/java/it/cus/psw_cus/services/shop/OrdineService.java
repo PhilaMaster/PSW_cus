@@ -51,8 +51,8 @@ public class OrdineService {
 
 
     @Transactional
-    public Optional<Ordine> trovaOrdinePerUtente(int id) throws OrdineNotFoundException, UserNotFoundException {
-        Utente u = utenteRepository.findById(id).orElseThrow(UserNotFoundException::new);
+    public List<Ordine> trovaOrdinePerUtente() throws OrdineNotFoundException, UserNotFoundException {
+        Utente u = utenteRepository.findById(Utils.getId()).orElseThrow(UserNotFoundException::new);
         return ordineRepository.findByUtente(u);
     }
 

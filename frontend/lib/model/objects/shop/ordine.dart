@@ -89,7 +89,7 @@ class OrdineService {
 
   Future<List<Ordine>> trovaOrdinePerUtente(int utenteId) async {
     final response = await http.get(
-        Uri.parse('$baseUrl/utente/$utenteId'), // Modifica l'URL secondo necessità
+        Uri.parse('$baseUrl/ordiniUtente'),
         headers: {
           'Authorization': 'Bearer ${Authenticator().getToken()}'
         }
