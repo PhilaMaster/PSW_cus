@@ -35,6 +35,30 @@ public class PrenotazioneService {
         this.abbonamentoService = abbonamentoService;
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public Prenotazione create(Prenotazione p) throws SalaFullException, SalaNotFoundException, PrenotazioneAlreadyExistsException,
+            UserNotFoundException, InsufficientEntriesException, PrenotazioneNotValidException {
+        //ricevo Prenotazione p che tratto come DTO (prendo solo i valori chiave ma li processo con quelli che ho nel backend)
+
+        //l'utente per cui creo la prenotazione è quello loggato che prendo dal token jwt (file Utils)
+        Utente u = utenteRepository.findById(Utils.getId()).orElseThrow(UserNotFoundException::new);
+
+        Sala s = salaRepository.findById(p.getSala().getId()).orElseThrow(SalaNotFoundException::new);
+        if(p.getData().before(new Date())) throw new PrenotazioneNotValidException("Impossibile prenotare per una data passata");
+
+        if (prenotazioneRepository.existsPrenotazioneByUtenteAndDataAndFasciaOrariaAndSala(u,p.getData(),p.getFasciaOraria(),s))
+            throw new PrenotazioneAlreadyExistsException();
+        if (utenteService.ingressiUtente() <= 0)
+            throw new InsufficientEntriesException();
+        if (!salaDisponibile(s,p.getData(),p.getFasciaOraria()))
+            throw new SalaFullException();
+
+        //se non ci sono stati problemi fin'ora allora scalo l'ingresso
+        abbonamentoService.scalaIngresso(u.getId());
+        //solo se riesco a scalare l'ingresso allora salvo la prenotazione, altrimenti scalaIngresso() lancia eccezione e fa rollback correttamente
+        return prenotazioneRepository.save(p);
+    }
+
     @Transactional(readOnly = true)
     public List<Prenotazione> findAll() {
         return prenotazioneRepository.findAll();
@@ -59,28 +83,12 @@ public class PrenotazioneService {
         return getPrenotazioniUtenteDopoData(data);
     }
 
-    @Transactional(rollbackFor = Exception.class, noRollbackFor = {
-            UnauthorizedAccessException.class,
-            PrenotazioneAlreadyExistsException.class,
-            InsufficientEntriesException.class,
-            SalaFullException.class})
-    public Prenotazione create(Prenotazione p) throws SalaFullException, SalaNotFoundException, PrenotazioneAlreadyExistsException,
-            UserNotFoundException, UnauthorizedAccessException, InsufficientEntriesException {
-        if(p.getUtente().getId() != Utils.getId()) throw new UnauthorizedAccessException();
-        if (prenotazioneRepository.existsPrenotazioneByUtenteAndDataAndFasciaOrariaAndSala(p.getUtente(),p.getData(),p.getFasciaOraria(),p.getSala()))
-            throw new PrenotazioneAlreadyExistsException();
-        if (utenteService.ingressiUtente(p.getUtente().getId()) <= 0)
-            throw new InsufficientEntriesException();
-        if (!salaDisponibile(p))
-            throw new SalaFullException();
-        abbonamentoService.scalaIngresso(p.getUtente().getId());
-        return prenotazioneRepository.save(p);
-    }
 
-    private boolean salaDisponibile(Prenotazione p) throws SalaNotFoundException {
-        Sala sala = salaRepository.findById(p.getSala().getId()).orElseThrow(SalaNotFoundException::new);
+
+    private boolean salaDisponibile(Sala sala, Date data, Prenotazione.FasciaOraria fasciaOraria) throws SalaNotFoundException {
+//        Sala sala = salaRepository.findById(p.getSala().getId()).orElseThrow(SalaNotFoundException::new);
         int c1 = sala.getCapienza();
-        int c2 = prenotazioneRepository.countPrenotazioniByDataAndFasciaOrariaAndSala(p.getData(),p.getFasciaOraria(),sala);
+        int c2 = prenotazioneRepository.countPrenotazioniByDataAndFasciaOrariaAndSala(data,fasciaOraria,sala);
         return c1>c2;
     }
 

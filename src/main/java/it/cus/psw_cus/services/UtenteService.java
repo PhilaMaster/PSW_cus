@@ -28,7 +28,7 @@ public class UtenteService {
     }
 
     public Utente cercaUtente(int id) throws UserNotFoundException {
-        return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+        return userRepository.findById(Utils.getId()).orElseThrow(UserNotFoundException::new);
     }
 
     public Utente creaUtente(Utente utente) throws UserAlreadyExistsException{
@@ -37,14 +37,12 @@ public class UtenteService {
         return userRepository.save(utente);
     }
 
-    public void eliminaUtente(int id) throws UserNotFoundException, UnauthorizedAccessException {
-        Utente utente = cercaUtente(id);
-        userRepository.delete(utente);
+    public void eliminaUtente() throws UserNotFoundException {
+        userRepository.delete(cercaUtente(Utils.getId()));
     }
 
-    public int ingressiUtente(int id) throws UserNotFoundException, UnauthorizedAccessException {
-        if (id!= Utils.getId()) throw new UnauthorizedAccessException();
-        return abbonamentoRepository.contaIngressiRimanentiUtente(cercaUtente(id));
+    public int ingressiUtente() throws UserNotFoundException {
+        return abbonamentoRepository.contaIngressiRimanentiUtente(cercaUtente(Utils.getId()));
     }
 
 }

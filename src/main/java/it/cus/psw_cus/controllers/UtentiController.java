@@ -2,6 +2,7 @@ package it.cus.psw_cus.controllers;
 
 import it.cus.psw_cus.entities.Utente;
 import it.cus.psw_cus.services.UtenteService;
+import it.cus.psw_cus.support.authentication.Utils;
 import it.cus.psw_cus.support.exceptions.UnauthorizedAccessException;
 import it.cus.psw_cus.support.exceptions.UserAlreadyExistsException;
 import it.cus.psw_cus.support.exceptions.UserNotFoundException;
@@ -24,23 +25,20 @@ public class UtentiController {
         this.userService = userService;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public List<Utente> getAllUsers() {
         return userService.cercaTutti();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getUser(@PathVariable int id) throws UserNotFoundException {
-        return new ResponseEntity<>(userService.cercaUtente(id), HttpStatus.OK);
+    @GetMapping
+    public ResponseEntity<?> getUser() throws UserNotFoundException {
+        return new ResponseEntity<>(userService.cercaUtente(Utils.getId()), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}/ingressi")
-    public ResponseEntity<?> getUserIngressiRimanenti(@PathVariable int id) throws UserNotFoundException {
-        try {
-            return new ResponseEntity<>(userService.ingressiUtente(id), HttpStatus.OK);
-        } catch (UnauthorizedAccessException e) {
-            return new ResponseEntity<>("Ricerca non autorizzata", HttpStatus.UNAUTHORIZED);
-        }
+    @GetMapping("/ingressi")
+    public ResponseEntity<?> getUserIngressiRimanenti() throws UserNotFoundException {
+        return new ResponseEntity<>(userService.ingressiUtente(), HttpStatus.OK);
+
     }
 
     @ExceptionHandler(UserNotFoundException.class)
@@ -60,12 +58,8 @@ public class UtentiController {
     @PreAuthorize("hasRole('admin')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable int id) throws UserNotFoundException {
-        try {
-            userService.eliminaUtente(id);
-            return new ResponseEntity<>("Utente eliminato con successo", HttpStatus.OK);
-        } catch (UnauthorizedAccessException e) {
-            return new ResponseEntity<>("Eliminazione non autorizzata", HttpStatus.UNAUTHORIZED);
-        }
+        userService.eliminaUtente();
+        return new ResponseEntity<>("Utente eliminato con successo", HttpStatus.OK);
     }
 
 }

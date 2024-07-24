@@ -72,7 +72,11 @@ class AbbonamentoService {
     );
     if (response.statusCode == 201) {
       return Abbonamento.fromJson(json.decode(response.body));
-    } else {
+    } else if (response.statusCode == 401) {
+      throw UnauthorizedException();
+    } else if (response.statusCode == 404) {
+      throw Exception('Utente non trovato nel backend');
+    }else {
       throw Exception('Impossibile creare l\'abbonamento ${response.body}');
     }
   }
@@ -113,3 +117,4 @@ class AbbonamentoService {
     }
   }
 }
+class UnauthorizedException implements Exception {}

@@ -13,6 +13,14 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       automaticallyImplyLeading: false,
       title: Text(isLoggedIn? "Cus Cosenza":"Cus Cosenza (sessione Guest)"),
+      leading: Navigator.canPop(context)
+          ? IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      )
+          : null,
       actions: <Widget>[
         TextButton(
           onPressed: () {

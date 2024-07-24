@@ -46,7 +46,6 @@ class Authenticator{
 
       final Map<String, dynamic> body = json.decode(response.body);
       _authenticationData = AuthenticationData.fromJson(body);
-      print("sus1");
       if (_authenticationData!.hasError()) {
         if (_authenticationData!.error == 'Invalid user credentials') {
           return LogInResult.error_wrong_credentials;
@@ -62,9 +61,9 @@ class Authenticator{
       });
 
       isLoggedIn = true;
-      String token = _authenticationData!.accessToken!;
-      Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-      utenteLoggato = await UtenteService.getUtente(decodedToken['userId']);
+      // String token = _authenticationData!.accessToken!;
+      // Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+      utenteLoggato = await UtenteService.getUtente();
 
 
       return LogInResult.logged;

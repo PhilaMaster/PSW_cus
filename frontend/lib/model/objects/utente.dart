@@ -60,8 +60,8 @@ extension SessoExtension on Sesso {
 class UtenteService{
   static const String _baseUrl = 'http://localhost:8080/api/utenti';
 
-  static Future<int> getIngressi(int id) async{
-    final response = await http.get(Uri.parse('$_baseUrl/$id/ingressi'),headers: {'Authorization': 'Bearer ${Authenticator().getToken()}'});
+  static Future<int> getIngressi() async{
+    final response = await http.get(Uri.parse('$_baseUrl/ingressi'),headers: {'Authorization': 'Bearer ${Authenticator().getToken()}'});
 
     if (response.statusCode == 200) {
       return int.parse(response.body);
@@ -72,8 +72,8 @@ class UtenteService{
     }
   }
 
-  static Future<Utente> getUtente(int id) async{
-    final response = await http.get(Uri.parse('$_baseUrl/$id'),headers: {'Authorization': 'Bearer ${Authenticator().getToken()}'});
+  static Future<Utente> getUtente() async{
+    final response = await http.get(Uri.parse(_baseUrl),headers: {'Authorization': 'Bearer ${Authenticator().getToken()}'});
 
     if (response.statusCode == 200) {
       return Utente.fromJson(json.decode(response.body));

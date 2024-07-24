@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/model/objects/authenticator.dart';
 import 'package:frontend/model/objects/prenotazioni/abbonamento.dart';
 import 'package:frontend/model/objects/prenotazioni/pacchetto.dart';
 
@@ -15,13 +16,16 @@ class Abbonamenti extends StatefulWidget {
 class _AbbonamentiState extends State<Abbonamenti> {
   late Future<List<Pacchetto>> futurePacchetti;
   late Future<List<Abbonamento>> futureAbbonamenti;
-  Utente utenteLoggato = Utente(id:1,nome:"Pasquale",cognome: "Papalia",sesso:Sesso.MASCHIO);//esempio finchè non facciamo il login
+  Utente uLoggato = Utente(id:-1,nome:"Guest",cognome: "Guest",sesso:Sesso.MASCHIO);
 
   @override
   void initState() {
     super.initState();
     futurePacchetti = PacchettoService.getAllPacchetti();
     futureAbbonamenti = AbbonamentoService.getAbbonamentiByUtenteWithPositiveRimanenti();
+    if(isLoggedIn) {
+      uLoggato = utenteLoggato!;
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -35,7 +39,7 @@ class _AbbonamentiState extends State<Abbonamenti> {
         child:Column(
           children: [
             Text(
-              '${utenteLoggato.nome}, in questa pagina puoi trovare i pacchetti disponibili e gli abbonamenti che hai sottoscritto',
+              '${uLoggato.nome}, in questa pagina puoi trovare i pacchetti disponibili e gli abbonamenti che hai sottoscritto',
               style: const TextStyle(fontSize: 18),
                 ),
               const SizedBox(height: 16),
@@ -72,10 +76,10 @@ class _AbbonamentiState extends State<Abbonamenti> {
                             onPressed: () async {
                               try {
                                 Abbonamento abb = Abbonamento(
-                                  id: -1,
+                                  id: -1,//lo creo lato backend
                                   rimanenti: pacchetto.ingressi,
                                   pacchetto: pacchetto,
-                                  utente: utenteLoggato,
+                                  utente: uLoggato,
                                   dataAcquisto: DateTime.now(),
                                 );
                                 Abbonamento created = await AbbonamentoService.createAbbonamento(abb);
@@ -83,8 +87,11 @@ class _AbbonamentiState extends State<Abbonamenti> {
                                   _showConfirmationDialog(context);
                                   // widget.updateIngressi();
                                 }
+                              } on UnauthorizedException catch(e){
+                                _showErrorDialog(context, "effettua prima il login", () {Navigator.pushNamed(context,"/login");});
                               } catch (error) {
-                                _showErrorDialog(context, error.toString());
+                                print("errore $error");//stampo in console ma la vedo solo io
+                                _showErrorDialog(context, "errore generico",null);
                               }},
                             child: const Text('Acquista'),
                           ),
@@ -108,7 +115,7 @@ class _AbbonamentiState extends State<Abbonamenti> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Errore nel caricamento degli abbonamenti: ${snapshot.error}'));//TODO debug
+                    return const Center(child: Text('Errore nel caricamento degli abbonamenti.'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return const Center(child: Text('Non hai sottoscritto alcun abbonamento'));
                   } else {
@@ -165,17 +172,18 @@ class _AbbonamentiState extends State<Abbonamenti> {
     );
   }
 
-  void _showErrorDialog(BuildContext context, String errorMessage) {
+  void _showErrorDialog(BuildContext context, String errore, Function? f) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Errore'),
-          content: Text('Si è verificato un errore: $errorMessage'),
+          title: const Text('Errore nella prenotazione'),
+          content: Text(errore),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
+                f?.call();
               },
               child: const Text('OK'),
             ),
