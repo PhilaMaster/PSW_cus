@@ -17,6 +17,8 @@
         <java.version>17</java.version>
         <keycloak.version>22.0.4</keycloak.version>
         <resteasy.version>6.2.5.Final</resteasy.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
     </properties>
     <dependencies>
         <dependency>

@@ -36,8 +36,12 @@ class ProdottoCarrello {
   });
 
   factory ProdottoCarrello.fromJson(Map<String, dynamic> json) {
+    var prodottoJson = json['prodotto'] as Map<String, dynamic>?;
+    if (prodottoJson == null) {
+      throw ArgumentError("Field 'prodotto' is missing or is not a map");
+    }
     return ProdottoCarrello(
-      prodotto: Prodotto.fromJson(json['prodotto']),
+      prodotto: Prodotto.fromJson(prodottoJson),
       quantita: json['quantita'],
     );
   }

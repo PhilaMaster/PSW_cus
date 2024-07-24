@@ -20,7 +20,7 @@ class _OrdiniUtentePageState extends State<OrdiniUtentePage> {
     super.initState();
     if (isLoggedIn) {
       user = utenteLoggato!;
-      _ordiniFuture = OrdineService().trovaOrdinePerUtente(user.id);
+      _ordiniFuture = OrdineService().trovaOrdinePerUtente();
     }
   }
 
@@ -46,7 +46,7 @@ class _OrdiniUtentePageState extends State<OrdiniUtentePage> {
                 final ordine = snapshot.data![index];
                 return ListTile(
                   title: Text('Ordine #${ordine.id}'),
-                  subtitle: Text('Data: ${ordine.dataCreazione.toLocal()}'),
+                  subtitle: Text('Data: ${ordine.dataCreazione.toString().split(" ")[0]}'),
                   trailing: Text('Totale: ${ordine.prezzoTotale.toStringAsFixed(2)} €'),
                   onTap: () {
                     // Aggiungi logica per navigare ai dettagli dell'ordine, se necessario
