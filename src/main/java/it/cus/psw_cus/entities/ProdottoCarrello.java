@@ -34,6 +34,7 @@ public class ProdottoCarrello {
 
     @Basic
     @Column(name = "in_carrello")
+    @JsonIgnore
     private boolean inCarrello;
 
     @Override

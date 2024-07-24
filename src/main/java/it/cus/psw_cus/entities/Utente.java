@@ -30,6 +30,10 @@ public class Utente {
     @Column(name = "cognome", nullable = false, length = 50)
     private String cognome;
 
+    @Basic
+    @Column(name = "email", nullable = false, length = 50)
+    private String email;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "sesso", nullable = false, length = 25)
     private Sesso sesso;
