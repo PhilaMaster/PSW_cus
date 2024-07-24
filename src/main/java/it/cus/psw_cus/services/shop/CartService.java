@@ -54,10 +54,16 @@ public class CartService {
         Set<ProdottoCarrello> prodottiCarrello =  cart.getProdotti();
         for(ProdottoCarrello pc : prodottiCarrello){
             Prodotto p = pc.getProdotto();
-            if(p.equals(pr) && pc.isInCarrello()){
-                pc.setQuantita(pc.getQuantita() + prodottoCarrelloDTO.quantita());
-                presente = true;
-                break;
+            if(p.equals(pr)){
+                if(pc.isInCarrello()){
+                    pc.setQuantita(pc.getQuantita() + prodottoCarrelloDTO.quantita());
+                    presente = true;
+                    break;
+                }else
+                    if(pc.getQuantita() == prodottoCarrelloDTO.quantita()){
+                        pc.setInCarrello(true);
+                        break;
+                    }
             }
         }
         if(!presente){
