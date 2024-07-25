@@ -236,6 +236,10 @@ class _ShopState extends State<Shop> {
                                   const SizedBox(height: 20),
                                   ElevatedButton(
                                     onPressed: () {
+                                      if(!isLoggedIn){
+                                        Navigator.pushNamed(context, "/login");
+                                        return;
+                                      }
                                       if (_quantities[index] != null && _quantities[index]! > 0) {
                                         _addToCart(prodotto, _quantities[index]!);
                                       }
