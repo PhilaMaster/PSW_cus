@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -20,7 +22,7 @@ public class ProdottoOrdine {
     @Column(name = "id")
     private int id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "prodotto_id")
     private ProdottoCarrello prodottoCarrello;
 

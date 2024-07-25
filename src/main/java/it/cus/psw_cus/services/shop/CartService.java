@@ -101,10 +101,11 @@ public class CartService {
     public Ordine checkout(Cart c) throws QuantitaErrata, EmptyCart, SessionError, UserNotFoundException {
         Utente u = utenteRepository.findById(Utils.getId()).orElseThrow(UserNotFoundException::new);
         Cart cart = cartRepository.findByUtente(u);
-        if (cart == null || cart.getProdotti().isEmpty()) throw new EmptyCart("Il carrello è vuoto");
+        Set<ProdottoCarrello> prodottiCarrello = new HashSet<>(prodottoCarrelloRepository.findByCartAndInCarrello(cart,true));
+        if (cart == null || prodottiCarrello.isEmpty()) throw new EmptyCart("Il carrello è vuoto");
 
-        //if(!cart.getProdotti().equals(c.getProdotti()))
-        //    throw new SessionError("Errore: refreshare la pagina");
+        if(!prodottiCarrello.equals(c.getProdotti()))
+            throw new SessionError("Errore: refreshare la pagina");
 
         Ordine ordine = new Ordine();
 
@@ -115,7 +116,6 @@ public class CartService {
 
         Set<ProdottoOrdine> prodottiOrdine = new HashSet<>();
         for (ProdottoCarrello prodottoCarrello : prodottoCarrelloRepository.findByCartAndInCarrello(cart, true)) {
-            System.out.println(prodottoCarrello+" è in carrello");
             Prodotto prodotto = prodottoCarrello.getProdotto();
             if (prodottoCarrello.getQuantita() <= 0)
                 throw new QuantitaErrata("Quantità non valida");
@@ -135,12 +135,9 @@ public class CartService {
         }
         ordine.setProdotti(prodottiOrdine);
         ordine.setPrezzoTotale(prezzoTotale);
-
         ordineRepository.save(ordine);
 
         cartRepository.save(cart);
-
-        System.out.println("Svuotato");
 
         return ordine;
     }

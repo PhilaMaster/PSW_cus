@@ -64,4 +64,35 @@ public class Prodotto {
         Maschile,Femminile,Unisex;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Prodotto prodotto = (Prodotto) o;
+
+        if (Double.compare(prodotto.prezzo, prezzo) != 0) return false;
+        if (disponibilita != prodotto.disponibilita) return false;
+        if (nome != null ? !nome.equals(prodotto.nome) : prodotto.nome != null) return false;
+        if (categoria != null ? !categoria.equals(prodotto.categoria) : prodotto.categoria != null) return false;
+        if (descrizione != null ? !descrizione.equals(prodotto.descrizione) : prodotto.descrizione != null) return false;
+        if (immagine != null ? !immagine.equals(prodotto.immagine) : prodotto.immagine != null) return false;
+        return sesso == prodotto.sesso;
+    }
+
+    @Override
+    public int hashCode() {
+
+        int result;
+        result = nome != null ? nome.hashCode() : 0;
+        result = 31 * result + (prezzo != +0.0d ? (int)(prezzo) : 0);
+        result = 31 * result + (categoria != null ? categoria.hashCode() : 0);
+        result = 31 * result + (descrizione != null ? descrizione.hashCode() : 0);
+        result = 31 * result + (immagine != null ? immagine.hashCode() : 0);
+        result = 31 * result + disponibilita;
+        result = 31 * result + (sesso != null ? sesso.hashCode() : 0);
+        return result;
+    }
+
+
 }

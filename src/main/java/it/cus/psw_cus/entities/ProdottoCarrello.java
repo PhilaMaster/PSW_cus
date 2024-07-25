@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -36,6 +38,11 @@ public class ProdottoCarrello {
     @Column(name = "in_carrello")
     @JsonIgnore
     private boolean inCarrello;
+
+    @OneToMany
+    @JsonIgnore
+    @JoinColumn(name = "prodottoOrdine")
+    private List<ProdottoOrdine> prodottoOrdine;
 
     @Override
     public boolean equals(Object o) {
