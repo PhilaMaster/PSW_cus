@@ -112,12 +112,6 @@ public class CartService {
         Set<ProdottoCarrello> prodottiCarrello = new HashSet<>(prodottoCarrelloRepository.findByCartAndInCarrello(cart,true));
         if (cart == null || prodottiCarrello.isEmpty()) throw new EmptyCart("Il carrello è vuoto");
 
-        System.out.println("Carrello backend:");
-        System.out.println(prodottiCarrello);
-        System.out.println("Carrello frontend:");
-        System.out.println(c.getProdotti());
-        if(!prodottiCarrello.equals(c.getProdotti()))
-            throw new SessionError("Errore: refreshare la pagina");
         System.out.println("Prodotti uguali, procedo");
 
         Ordine ordine = new Ordine();

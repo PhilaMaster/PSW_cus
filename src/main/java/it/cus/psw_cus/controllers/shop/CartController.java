@@ -77,8 +77,8 @@ public class CartController {
     @PostMapping("/checkout")
     public ResponseEntity<?> checkout(@RequestBody @Valid Cart cart) {
         try {
-            Cart c = cartService.carrelloUtente();
-            Ordine ordine = cartService.checkout(c);
+//            Cart c = cartService.carrelloUtente();
+            Ordine ordine = cartService.checkout(cart);
             if (ordine != null) {
                 return new ResponseEntity<>(ordine, HttpStatus.OK);
             } else {
