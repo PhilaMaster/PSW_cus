@@ -34,6 +34,12 @@ public class CartService {
     public Cart carrelloUtente() throws UserNotFoundException {
         Utente u = utenteRepository.findById(Utils.getId()).orElseThrow(UserNotFoundException::new);
         Cart carrello = cartRepository.findByUtente(u);
+        if (carrello == null) {
+            carrello = new Cart();
+            carrello.setUtente(u);
+            cartRepository.save(carrello);
+            carrello = cartRepository.findByUtente(u);
+        }
         carrello.setProdotti(new HashSet<>(prodottoCarrelloRepository.findByCartAndInCarrello(carrello,true)));
         return carrello;
     }
@@ -47,6 +53,8 @@ public class CartService {
         if (cart == null) {
             cart = new Cart();
             cart.setUtente(u);
+            cartRepository.save(cart);
+            cart = cartRepository.findByUtente(u);
         }
 
         Prodotto pr = prodottoRepository.findById(prodottoCarrelloDTO.idProdotto()).orElseThrow(ProdottoNotFoundException::new);
@@ -104,8 +112,13 @@ public class CartService {
         Set<ProdottoCarrello> prodottiCarrello = new HashSet<>(prodottoCarrelloRepository.findByCartAndInCarrello(cart,true));
         if (cart == null || prodottiCarrello.isEmpty()) throw new EmptyCart("Il carrello è vuoto");
 
+        System.out.println("Carrello backend:");
+        System.out.println(prodottiCarrello);
+        System.out.println("Carrello frontend:");
+        System.out.println(c.getProdotti());
         if(!prodottiCarrello.equals(c.getProdotti()))
             throw new SessionError("Errore: refreshare la pagina");
+        System.out.println("Prodotti uguali, procedo");
 
         Ordine ordine = new Ordine();
 

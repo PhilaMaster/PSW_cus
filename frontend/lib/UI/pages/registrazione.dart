@@ -74,7 +74,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
     String username = _usernameController.text;
     String password = _passwordController.text;
     Sesso sesso = _sesso;
-    //Gender? gender = _selectedGender;
 
 
 
@@ -92,7 +91,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
       bool success = await userService.createUser(userDto);
 
       if (success) {
-        Navigator.pop(context); // Torna alla pagina precedente, se necessario
+        Navigator.pop(context);
       } else {
         setState(() {
           _errorMessage = 'Registrazione fallita. Riprova.';
