@@ -27,7 +27,7 @@ class Utente{
     'id': id,
     'nome': nome,
     'cognome':cognome,
-    'sesso':sesso.toShortString()//TODO dovrebbe andare poichè le ho scritte in maiuscolo ma è comunque da testare
+    'sesso':sesso.toShortString()
   };
 
   @override

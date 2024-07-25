@@ -26,7 +26,8 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, "/api/**").permitAll() //permetto solo GET su tutti i percorsi
+                        .requestMatchers(HttpMethod.GET, "/api/**").permitAll()//permetto solo GET su tutti i percorsi
+                        .requestMatchers(HttpMethod.POST, "/users/*").permitAll()
                         .anyRequest().authenticated() //richiedo autenticazione per tutte le altre richieste
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter)))
