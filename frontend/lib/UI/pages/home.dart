@@ -108,7 +108,7 @@ class _HomePageState extends State<HomePage> {
                 } else {
 
                   return SizedBox(
-                    height: 600,
+                    height: 400,
                     width: MediaQuery.of(context).size.width,//allarga quanto lo schermo
                     child:
                       // Expanded(
