@@ -1,7 +1,19 @@
-Progetto di Piattaforme Software 23/24
-- Pasquale Papalia mat.230695
-- Andrea Nuara mat.230920
+# University Sports Center Management System (CUS)
 
-Il sito gestisce il centro universitario sportivo, è diviso in due sezioni principali:
-- sezione prenotazioni: l'utente può acquistare degli abbonamenti in base a dei pacchetti presenti sul sito, coi i quali può poi effettuare prenotazioni alle sale offerte. Viene mantenuto lo storico degli abbonamenti con il numero di ingressi disponibili.
-- sezione shop: l'utente può collegarsi alla pagina di merchandising, aggiungere/rimuovere prodotti al carrello ed effettuare degli acquisti. Viene mantenuto lo storico degli ordini.
+## Project Overview
+
+This project is a web application designed to manage a university sports center, providing functionalities for users to book sports facilities and purchase merchandise. The system is divided into two main sections:
+
+- Booking Section: Users can purchase subscriptions based on predefined packages available on the website. These subscriptions allow them to book access to different sports facilities. The system maintains a history of subscriptions, tracking the number of available entries.
+
+- Shop Section: Users can browse the merchandising page, add/remove products from their cart, and complete purchases. The system keeps a record of past orders.
+
+## Frameworks & Tools
+
+Backend: Java with Spring Boot
+
+Frontend: Flutter
+
+Authentication: Keycloak
+
+Database: MySQL
